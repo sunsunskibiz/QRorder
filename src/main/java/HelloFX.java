@@ -26,10 +26,12 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.awt.geom.AffineTransform;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
 import java.text.SimpleDateFormat;
+import java.util.Properties;
 
 //import com.google.zxing.BinaryBitmap;
 //import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
@@ -38,6 +40,11 @@ import java.text.SimpleDateFormat;
 //import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.ResultPoint;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
 
 public class HelloFX extends Application {
@@ -94,6 +101,101 @@ public class HelloFX extends Application {
 
     }
 
+    void SendEmail(String host, int port, String username, String password) {
+        Properties prop = new Properties();
+        prop.put("mail.smtp.auth", true);
+        prop.put("mail.smtp.starttls.enable", "true");
+        prop.put("mail.smtp.host", host);
+        prop.put("mail.smtp.port", port);
+        prop.put("mail.smtp.ssl.trust", host);
+
+        Session session = Session.getInstance(prop, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+        System.out.println("Set Properties and Session");
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress("chantapat.sun@gmail.com"));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("cafeone.official@gmail.com"));
+            message.setSubject("Try send email in helloFX ja");
+
+            String msg = "This is my first email using JavaMailer for use <http://cafeone/03/0812034283> <http://cafeone#cake> \"Order\"";
+            MimeBodyPart mimeBodyPart = new MimeBodyPart();
+            mimeBodyPart.setContent(msg, "text/html");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(mimeBodyPart);
+
+            message.setContent(multipart);
+
+            Transport.send(message);
+            System.out.println("Email has send.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void ReceiveEmail(String host, int port, String username, String password) {
+        try {
+            Properties prop = new Properties();
+            prop.put("mail.smtp.auth", true);
+            prop.put("mail.smtp.starttls.enable", "true");
+            prop.put("mail.smtp.host", host);
+            prop.put("mail.smtp.port", port);
+            prop.put("mail.smtp.ssl.trust", host);
+            Session session = Session.getDefaultInstance(prop);
+
+            Store store = session.getStore("imaps");
+            store.connect(host, username, password);
+
+            // Create folder
+            Folder folder = store.getFolder("INBOX");
+            folder.open(Folder.READ_ONLY);
+
+            // Fetch massage from folder
+            Message[] messages = folder.getMessages();
+
+            for (int i = 0, n = messages.length; i < n; i++) {
+                Message individualmsg = messages[i];
+                System.out.println("==========================Print individual messages=============================");
+                System.out.println("No# " + (i + 1));
+                System.out.println("Email Subejct: " + individualmsg.getSubject());
+                System.out.println("Sender: " + individualmsg.getFrom()[0]);
+
+                String contentType = individualmsg.getContentType();
+                String messageContent = "";
+
+                if (contentType.contains("multipart")) {
+                    Multipart multiPart = (Multipart) individualmsg.getContent();
+                    int numberOfParts = multiPart.getCount();
+                    for (int partCount = 0; partCount < numberOfParts; partCount++) {
+                        MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+                        messageContent = part.getContent().toString();
+                    }
+                } else if (contentType.contains("text/plain") || contentType.contains("text/html")) {
+                    Object content = individualmsg.getContent();
+                    if (content != null) {
+                        messageContent = content.toString();
+                    }
+                } else if (contentType.contains("image/jpeg")) {
+                    System.out.println("--------> image/jpeg");
+                }
+                System.out.println("Content: " + messageContent);
+            }
+            // Close all the objects
+            folder.close(false);
+            store.close();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
 //        String javaVersion = System.getProperty("java.version");
@@ -112,9 +214,9 @@ public class HelloFX extends Application {
         System.out.println("Hello World");
 
 
-        System.out.println("======================= Connect camera ============================");
-        HelloFX hel = new HelloFX();
-        hel.testCAM();
+//        System.out.println("======================= Connect camera ============================");
+//        HelloFX hel = new HelloFX();
+//        hel.testCAM();
 
 //        System.out.println("======================= Write RDF ============================");
 //        String fileName = "testRDF";
@@ -136,9 +238,15 @@ public class HelloFX extends Application {
 //        rdfRead.listMenuStatus(destPath);
 //        System.out.println("Read finished");
 
+//        System.out.println("======================= Send Email ============================");
+//        HelloFX helloFXEmail = new HelloFX();
+//        helloFXEmail.SendEmail("smtp.gmail.com", 587, "cafeone.official@gmail.com", "cafeOne2019" );
+//        System.out.println("Send email success");
 
-
-
+        System.out.println("======================= Recieve Email ============================");
+        HelloFX helloFXEmail = new HelloFX();
+        helloFXEmail.ReceiveEmail("smtp.gmail.com", 993, "cafeone.official@gmail.com", "cafeOne2019");
+        System.out.println("Receive email finished");
 
         launch();
     }
