@@ -117,6 +117,28 @@ public class HelloFX extends Application {
         return img2;
     }
 
+    void testCAM() {
+        Mat mat = new Mat();
+        VideoCapture cam = new VideoCapture(0);
+        if (cam.isOpened()) {
+            img2 = null;
+            if (cam.read(mat)) {
+                int w = mat.cols();
+                int h = mat.rows();
+                qrRct = null;
+                aPnt1 = aPnt2 = aPnt3 = null;
+                img = mat2Img(mat);
+                System.out.println("W : " + mat.cols() + ", H : " + mat.rows());
+            }
+        } else {
+            System.out.println("Not found cam");
+        }
+        cam.release();
+
+    }
+
+    /////////////////////////////// Part 2 //////////////////////////////////////
+
     void pdfAddText(PdfContentByte cb, int x, int y, String tx, int sz) throws Exception {
         cb.setFontAndSize(bf, sz);
         cb.beginText();
@@ -156,7 +178,7 @@ public class HelloFX extends Application {
     }
 
     @SuppressWarnings({"unchecked","deprecation"})
-    public void note3() throws Exception {
+    public void createQRnote() throws Exception {
         if(bf==null) bf = BaseFont.createFont("thaifont.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
         int p = 0;
         Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
@@ -265,28 +287,6 @@ public class HelloFX extends Application {
         doc.close();
         fout.flush();
         fout.close();
-    }
-
-    /////////////////////////////// Part 2 //////////////////////////////////////
-
-    void testCAM() {
-        Mat mat = new Mat();
-        VideoCapture cam = new VideoCapture(0);
-        if (cam.isOpened()) {
-            img2 = null;
-            if (cam.read(mat)) {
-                int w = mat.cols();
-                int h = mat.rows();
-                qrRct = null;
-                aPnt1 = aPnt2 = aPnt3 = null;
-                img = mat2Img(mat);
-                System.out.println("W : " + mat.cols() + ", H : " + mat.rows());
-            }
-        } else {
-            System.out.println("Not found cam");
-        }
-        cam.release();
-
     }
 
     void SendEmail(String host, int port, String username, String password) {
@@ -436,10 +436,10 @@ public class HelloFX extends Application {
 //        helloFXEmail.ReceiveEmail("smtp.gmail.com", 993, "cafeone.official@gmail.com", "cafeOne2019");
 //        System.out.println("Receive email finished");
 
-        System.out.println("======================= Create QRnote ============================");
-        HelloFX helloFXNOTE = new HelloFX();
-        helloFXNOTE.note3();
-        System.out.println("Create QRnote finished");
+//        System.out.println("======================= Create QRnote ============================");
+//        HelloFX helloFXNOTE = new HelloFX();
+//        helloFXNOTE.createQRnote();
+//        System.out.println("Create QRnote finished");
 
         launch();
     }
