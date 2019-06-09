@@ -95,44 +95,44 @@ public class HelloFX extends Application {
 
     SimpleDateFormat fmfn = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS", new Locale("uk","UK"));
 
-    BufferedImage img, img2;
-    java.awt.Point[] qrRct = null;
-    ResultPoint[] aResPnt = null;
-    Point aPnt1, aPnt2, aPnt3, aPnt4, aPnt5;
-    BufferedImage[] aMk = new BufferedImage[12];
+//    BufferedImage img, img2;
+//    java.awt.Point[] qrRct = null;
+//    ResultPoint[] aResPnt = null;
+//    Point aPnt1, aPnt2, aPnt3, aPnt4, aPnt5;
+//    BufferedImage[] aMk = new BufferedImage[12];
 
-    BufferedImage mat2Img(Mat m) {
-        int wd2 = m.cols();
-        int hg2 = m.rows();
-        int type = BufferedImage.TYPE_3BYTE_BGR;
-        if(m.channels() == 1) type = BufferedImage.TYPE_BYTE_GRAY;
-        BufferedImage img2 = new BufferedImage(wd2, hg2, type);
-        WritableRaster ras2 = img2.getRaster();
-        DataBufferByte buf2 = (DataBufferByte) ras2.getDataBuffer();
-        byte[] dat2 = buf2.getData();
-        m.get(0, 0, dat2);
-        return img2;
-    }
+//    BufferedImage mat2Img(Mat m) {
+//        int wd2 = m.cols();
+//        int hg2 = m.rows();
+//        int type = BufferedImage.TYPE_3BYTE_BGR;
+//        if(m.channels() == 1) type = BufferedImage.TYPE_BYTE_GRAY;
+//        BufferedImage img2 = new BufferedImage(wd2, hg2, type);
+//        WritableRaster ras2 = img2.getRaster();
+//        DataBufferByte buf2 = (DataBufferByte) ras2.getDataBuffer();
+//        byte[] dat2 = buf2.getData();
+//        m.get(0, 0, dat2);
+//        return img2;
+//    }
 
-    void testCAM() {
-        Mat mat = new Mat();
-        VideoCapture cam = new VideoCapture(0);
-        if (cam.isOpened()) {
-            img2 = null;
-            if (cam.read(mat)) {
-                int w = mat.cols();
-                int h = mat.rows();
-                qrRct = null;
-                aPnt1 = aPnt2 = aPnt3 = null;
-                img = mat2Img(mat);
-                System.out.println("W : " + mat.cols() + ", H : " + mat.rows());
-            }
-        } else {
-            System.out.println("Not found cam");
-        }
-        cam.release();
+//    void testCAM() {
+//        Mat mat = new Mat();
+//        VideoCapture cam = new VideoCapture(0);
+//        if (cam.isOpened()) {
+//            img2 = null;
+//            if (cam.read(mat)) {
+//                int w = mat.cols();
+//                int h = mat.rows();
+//                qrRct = null;
+//                aPnt1 = aPnt2 = aPnt3 = null;
+//                img = mat2Img(mat);
+//                System.out.println("W : " + mat.cols() + ", H : " + mat.rows());
+//            }
+//        } else {
+//            System.out.println("Not found cam");
+//        }
+//        cam.release();
 
-    }
+//    }
     /////////////////////////////// Part 1.5 //////////////////////////////////////
     void crop() throws NotFoundException, IOException {
         ArrayList<String> arrLineOrderedMenu = new ArrayList<String>();
@@ -542,7 +542,7 @@ public class HelloFX extends Application {
 //        Label l = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
 //        Scene scene = new Scene(new StackPane(l), 640, 480);
 //        stage.setScene(scene);
-        Parent root = FXMLLoader.load(getClass().getResource("/FXHelloCV.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/Scan1.fxml"));
         stage.setTitle("QR Order");
         stage.setScene(new Scene(root, 800, 600));
 
