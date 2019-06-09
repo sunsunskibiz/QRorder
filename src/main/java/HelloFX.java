@@ -542,7 +542,7 @@ public class HelloFX extends Application {
 //        Label l = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
 //        Scene scene = new Scene(new StackPane(l), 640, 480);
 //        stage.setScene(scene);
-        Parent root = FXMLLoader.load(getClass().getResource("/Scan1.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/Scan2.fxml"));
         stage.setTitle("QR Order");
         stage.setScene(new Scene(root, 800, 600));
 

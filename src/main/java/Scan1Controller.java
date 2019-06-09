@@ -5,10 +5,10 @@ import com.google.zxing.ResultPoint;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import nu.pattern.OpenCV;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Rect;
@@ -18,7 +18,6 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
@@ -36,6 +35,11 @@ public class Scan1Controller {
 
     private ScheduledExecutorService timer;
     private VideoCapture capture;
+
+    String[][] arrMenu = {
+            {"PINKLEMONADE", "39", "x", "y"}, {"MATCHA FRAPPE", "49", "x", "y"}, {"WHITE CHOC MACCHIATO", "49", "x", "y"}, {"LYNCHEE JUICE", "29", "x", "y"},
+            {"STRAWBERRY MILLE CREPR", "69", "x", "y"}, {"WARM CHOCOLATE CHIP PANOOKIE", "79", "x", "y"}, {"MATHCA MILLE CREPE", "169", "x", "y"}, {"DARK CHOCOLATE PRAPPE", "49", "x", "y"},
+            {"HONEY TOAST", "109", "x", "y"}, {"FIGGY PUDDING", "89", "x", "y"}, {"CHOCOLATE MUD BROWNIE", "79", "x", "y"}, {"TWO-TONE KAKIGORI", "139", "x", "y"}};
 
     public void initialize()
     {
@@ -107,7 +111,7 @@ public class Scan1Controller {
                     Result qr = new MultiFormatReader().decode(binaryBitmap);
                     if (qr != null) {
                         String url = qr.getText();
-                        System.out.println(url);
+                        System.out.println("Scand QRorder from " + url);
                         stopAcquisition();
 
                         aResPnt = qr.getResultPoints();
@@ -176,50 +180,54 @@ public class Scan1Controller {
                             //img2 = mat2Img(gray);
                             img2 = mat2Img(bwim);
 
-//                            ArrayList<String> arrLineOrderedMenu = new ArrayList<String>();
-//                            String message = "";
-//                            int total = 0;
-//                            double x0 = 20, y0 = 110, ysp = 27;
-//                            int mkwd = 40, mkhg = 40;
-//                            for (int j = 0; j < 12; j++) {
-//                                roi = new Rect((int) x0, (int) (y0 + ysp * (double) j), mkwd, mkhg);
-//                                mk = new Mat(bwim, roi);
-//                                // Detace order
-//                                int allPixels = mk.rows() * mk.cols();
-//
-//                                // Valid
-//                                // Get value pixel
-//                                int black = 0;
-//                                for (int row = 0; row < mk.rows(); row++) {
-//                                    for (int col = 0; col < mk.cols(); col++) {
-//                                        double[] check = mk.get(row, col);
-//                                        int value = (int) check[0];
-//                                        // count NO. black pixel
-//                                        if (value < 100) {
-//                                            black++;
-//                                        }
-//                                    }
-//                                }
+                            ArrayList<String> arrLineOrderedMenu = new ArrayList<String>();
+                            String message = "";
+                            int total = 0;
+                            double x0 = 20, y0 = 110, ysp = 27;
+                            int mkwd = 40, mkhg = 40;
+                            for (int j = 0; j < 12; j++) {
+                                roi = new Rect((int) x0, (int) (y0 + ysp * (double) j), mkwd, mkhg);
+                                mk = new Mat(bwim, roi);
+                                // Detace order
+                                int allPixels = mk.rows() * mk.cols();
 
-                                // Order that menu or Not (There are black pixels more than 10% of all pixels of Image)
-//                                float percentBlack = (float) black / (float) allPixels * 100;
-//                                if (percentBlack > 22) {
-//                                    String itOrder = "MenuOrdered => " + arrMenu[11 - j][1] + ", " + arrMenu[11 - j][0];
-//                                    System.out.println(itOrder);
-//                                    arrLineOrderedMenu.add(arrMenu[11 - j][0]);
-//                                    message += itOrder + "\n";
-//                                    total += Integer.parseInt(arrMenu[11 - j][1]);
-//                                }
+                                // Valid
+                                // Get value pixel
+                                int black = 0;
+                                for (int row = 0; row < mk.rows(); row++) {
+                                    for (int col = 0; col < mk.cols(); col++) {
+                                        double[] check = mk.get(row, col);
+                                        int value = (int) check[0];
+                                        // count NO. black pixel
+                                        if (value < 100) {
+                                            black++;
+                                        }
+                                    }
+                                }
+
+//                                 Order that menu or Not (There are black pixels more than 10% of all pixels of Image)
+                                float percentBlack = (float) black / (float) allPixels * 100;
+                                if (percentBlack > 22) {
+                                    String itOrder = "MenuOrdered => " + arrMenu[11 - j][1] + ", " + arrMenu[11 - j][0];
+                                    System.out.println(itOrder);
+                                    arrLineOrderedMenu.add(arrMenu[11 - j][0]);
+                                    message += itOrder + "\n";
+                                    total += Integer.parseInt(arrMenu[11 - j][1]);
+                                }
+
+                                // Send ordered menu to scan2.fxml
+//                                FXMLLoader loader = new FXMLLoader();
+//                                Scan2Controller scan2Controller = loader.getController();
+//                                scan2Controller.initData();
 
 
-                                // Print mini box
-//                                aMk[j] = mat2Img(mk);
-//                                String pathname = "out/minibox_" + j;
-//                                File fJpg = new File(pathname + ".jpg");
-//                                ImageIO.write(aMk[j], "jpg", fJpg);
-//                                System.out.println("------Print minibox-----------");
+//                                 Print mini box
+                                aMk[j] = mat2Img(mk);
+                                String pathname = "out/minibox/minibox_" + j;
+                                File fJpg = new File(pathname + ".jpg");
+                                ImageIO.write(aMk[j], "jpg", fJpg);
 
-//                            }
+                            }
                             File fJpg = new File("out/qrorder.jpg");
                             ImageIO.write(img2, "jpg", fJpg);
 //                                String txt = ""+qr+"\n" + message + "\n Total price : " + total;
