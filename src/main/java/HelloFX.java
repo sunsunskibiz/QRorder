@@ -303,6 +303,16 @@ public class HelloFX extends Application {
         stage.show();
     }
 
+    static void listFilesForFolder(final File folder) {
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                listFilesForFolder(fileEntry);
+            } else {
+                System.out.println(fileEntry.getName());
+            }
+        }
+    }
+
     public static void main(String[] args) throws Exception {
         System.out.println("Hello World");
 
@@ -329,5 +339,4 @@ public class HelloFX extends Application {
 
         launch();
     }
-
 }

@@ -32,7 +32,7 @@
             <Insets />
          </opaqueInsets>
       </Label>
-      <TableView fx:id="table" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <TableView fx:id="mytable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       <Button fx:id="scanButton" layoutX="375.0" layoutY="210.0" mnemonicParsing="false" onAction="#changeToScan1" prefHeight="44.0" prefWidth="220.0" text="Scan" GridPane.columnIndex="2" GridPane.rowIndex="1">
          <GridPane.margin>
             <Insets left="30.0" top="-200.0" />

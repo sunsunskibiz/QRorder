@@ -72,14 +72,12 @@ public class Scan1Controller {
 
             this.timer = Executors.newSingleThreadScheduledExecutor();
             this.timer.scheduleAtFixedRate(frameGrabber, 0, 33, TimeUnit.MILLISECONDS);
-
         }
         else
         {
             // log the error
             System.err.println("Impossible to open the camera connection...");
         }
-
     }
 
     BufferedImage mat2Img(Mat m) {
@@ -239,7 +237,7 @@ public class Scan1Controller {
 
                             }
                             dataToScene2 = arrLineOrderedMenu.toArray(new String[arrLineOrderedMenu.size()]);
-                            File fJpg = new File("out/qrorder.jpg");
+                            File fJpg = new File("out/002.jpg");
                             ImageIO.write(img2, "jpg", fJpg);
 //                                String txt = ""+qr+"\n" + message + "\n Total price : " + total;
                         }

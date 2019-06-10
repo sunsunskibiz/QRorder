@@ -1,38 +1,24 @@
 import javafx.beans.property.SimpleStringProperty;
 
 public class Table {
-    private SimpleStringProperty tableNO;
-    private SimpleStringProperty date;
+    private SimpleStringProperty table;
     private SimpleStringProperty time;
 
-    public Table(String tableNO, String date, String time) {
-        this.tableNO = new SimpleStringProperty(tableNO);
-        this.date = new SimpleStringProperty(date);
+    public Table(String table, String time) {
+        this.table = new SimpleStringProperty(table);
         this.time = new SimpleStringProperty(time);
     }
 
-    public String getTableNO() {
-        return tableNO.get();
+    public String gettable() {
+        return table.get();
     }
 
-    public SimpleStringProperty tableNOProperty() {
-        return tableNO;
+    public SimpleStringProperty tableProperty() {
+        return table;
     }
 
-    public void setTableNO(String tableNO) {
-        this.tableNO.set(tableNO);
-    }
-
-    public String getDate() {
-        return date.get();
-    }
-
-    public SimpleStringProperty dateProperty() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date.set(date);
+    public void settable(String table) {
+        this.table.set(table);
     }
 
     public String getTime() {

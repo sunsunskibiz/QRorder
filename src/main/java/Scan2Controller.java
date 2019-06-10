@@ -10,28 +10,38 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import javax.imageio.ImageIO;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class Scan2Controller implements Initializable {
-//public class Scan2Controller {
     @FXML
     private TableView<OrderTable> table;
+    @FXML
+    private ImageView currentFrame;
+
 
     ObservableList<OrderTable> data;
     String[] arrOrdered;
     String fileName;
+    Image img;
 
     private void loaddataFromScan1() {
         FXMLLoader loader = new FXMLLoader();
@@ -53,6 +63,12 @@ public class Scan2Controller implements Initializable {
 
         order.setCellValueFactory(new PropertyValueFactory<OrderTable,String>("order"));
         table.setItems(data);
+
+        try {
+            FileInputStream inputstream = new FileInputStream("out/002.jpg");
+            Image image = new Image(inputstream);
+            currentFrame.setImage(image);
+        } catch (IOException e) {}
     }
 
     @FXML
@@ -88,9 +104,10 @@ public class Scan2Controller implements Initializable {
         String url = scan1Controller.url;
         String tableNO = url.substring(url.indexOf("T"));
         Date date= new Date();
-        long time = date.getTime();
+        SimpleDateFormat ft = new SimpleDateFormat ("yyyyMMddhhmmss");
+        String time = ft.format(date);
         fileName = tableNO + "_" + time;
-        String pathName = "out/" + fileName;
+        String pathName = "out/now/" + fileName;
         String predicate = "http://cafeone.com#";
         String fullURL = "http://cafeone.com/" + tableNO + "/" + time;
 
@@ -108,7 +125,7 @@ public class Scan2Controller implements Initializable {
         table_no.writeRDF(pathName);
         System.out.println("------------- Write RDF file ----------------");
 
-        SendEmail("smtp.gmail.com", 587, "cafeone.official@gmail.com", "cafeOne2019" );
+        SendEmail("smtp.gmail.com", 587, "cafeone.official@gmail.com", "cafeOne2019", "cafeone.kitchen@gmail.com" );
         System.out.println("------------- Email send ----------------");
 
         // Go to main scene
@@ -119,7 +136,7 @@ public class Scan2Controller implements Initializable {
         window.show();
     }
 
-    void SendEmail(String host, int port, String username, String password) {
+    void SendEmail(String host, int port, String username, String password, String to) {
         Properties prop = new Properties();
         prop.put("mail.smtp.auth", true);
         prop.put("mail.smtp.starttls.enable", "true");
@@ -136,8 +153,8 @@ public class Scan2Controller implements Initializable {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("chantapat.sun@gmail.com"));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("cafeone.official@gmail.com"));
+            message.setFrom(new InternetAddress(username));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(fileName);
 
             String msg = "";
