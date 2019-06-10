@@ -68,6 +68,18 @@ public class Scan2Controller implements Initializable {
     }
 
     @FXML
+    public void backToMain(ActionEvent e) throws IOException {
+        Parent mainSceneParent = FXMLLoader.load(getClass().getResource("main.fxml"));
+        Scene mainScene = new Scene(mainSceneParent, 800, 600);
+
+        // get Stage information
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+
+        window.setScene(mainScene);
+        window.show();
+    }
+
+    @FXML
     public void ok(ActionEvent e) throws IOException {
         // Write to rdf file
         // Find file name
@@ -98,6 +110,13 @@ public class Scan2Controller implements Initializable {
 
         SendEmail("smtp.gmail.com", 587, "cafeone.official@gmail.com", "cafeOne2019" );
         System.out.println("------------- Email send ----------------");
+
+        // Go to main scene
+        Parent mainSceneParent = FXMLLoader.load(getClass().getResource("main.fxml"));
+        Scene mainScene = new Scene(mainSceneParent, 800, 600);
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+        window.setScene(mainScene);
+        window.show();
     }
 
     void SendEmail(String host, int port, String username, String password) {

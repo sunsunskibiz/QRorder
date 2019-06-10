@@ -297,6 +297,18 @@ public class Scan1Controller {
     }
 
     @FXML
+    public void backToMain(ActionEvent e) throws IOException {
+        Parent mainSceneParent = FXMLLoader.load(getClass().getResource("main.fxml"));
+        Scene mainScene = new Scene(mainSceneParent, 800, 600);
+
+        // get Stage information
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+
+        window.setScene(mainScene);
+        window.show();
+    }
+
+    @FXML
     public void refresh(ActionEvent e) throws IOException {
         Parent scan1SceneParent = FXMLLoader.load(getClass().getResource("scan1.fxml"));
         Scene scan1Scene = new Scene(scan1SceneParent, 800, 600);

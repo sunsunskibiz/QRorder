@@ -11,21 +11,21 @@ import java.util.ArrayList;
 
 public class Rdf {
     private Model model;
-
-    public static void main(String[] args) throws IOException {
-       Rdf r = new Rdf();
-       String pathDIR = "D:\\Project\\marvenEX\\prj01\\src\\main\\java\\tu\\myorg\\";
-       String pathFile = pathDIR + "test.ttl";
-//        ArrayList<String[]> arrListOrdered = r.listMenuStatus(pathFile);
-//        if (r.changeStatusTopaid(pathFile)) {
-//            System.out.println("changeStatusTopaid success.");
-//        } else {
-//            System.out.println("changeStatusTopaid failed");
-//        }
-//        System.out.println();
-//        System.out.println("After change to paid");
-//        r.listMenuStatus(pathFile);
-    }
+//
+//    public static void main(String[] args) throws IOException {
+//       Rdf r = new Rdf();
+//       String pathDIR = "D:\\Project\\marvenEX\\prj01\\src\\main\\java\\tu\\myorg\\";
+//       String pathFile = pathDIR + "test.ttl";
+////        ArrayList<String[]> arrListOrdered = r.listMenuStatus(pathFile);
+////        if (r.changeStatusTopaid(pathFile)) {
+////            System.out.println("changeStatusTopaid success.");
+////        } else {
+////            System.out.println("changeStatusTopaid failed");
+////        }
+////        System.out.println();
+////        System.out.println("After change to paid");
+////        r.listMenuStatus(pathFile);
+//    }
 
      public boolean changeStatusTopaid(String file) throws IOException {
          model = readModel(file);
