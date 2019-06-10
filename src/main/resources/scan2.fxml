@@ -45,7 +45,7 @@
             <Insets bottom="10.0" left="30.0" right="30.0" top="10.0" />
          </padding>
         </Button>
-      <Button fx:id="okButton" layoutX="430.0" layoutY="486.0" mnemonicParsing="false" text="OK" GridPane.columnIndex="1" GridPane.rowIndex="2">
+      <Button fx:id="okButton" layoutX="430.0" layoutY="486.0" mnemonicParsing="false" onAction="#ok" text="OK" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <font>
             <Font name="Consolas" size="24.0" />
          </font>
@@ -56,7 +56,7 @@
             <Insets left="150.0" />
          </GridPane.margin>
       </Button>
-      <Button fx:id="rescanButton" layoutX="587.0" layoutY="511.0" mnemonicParsing="false" text="Re-Scan" GridPane.rowIndex="2">
+      <Button fx:id="rescanButton" layoutX="587.0" layoutY="511.0" mnemonicParsing="false" onAction="#changeToScan1" text="Re-Scan" GridPane.rowIndex="2">
          <font>
             <Font name="Consolas" size="24.0" />
          </font>

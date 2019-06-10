@@ -4,11 +4,17 @@ import com.google.zxing.Result;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.HybridBinarizer;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Rect;
@@ -22,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -32,17 +39,20 @@ public class Scan1Controller {
     private Button backButton;
     @FXML
     private ImageView currentFrame;
+    @FXML
+    private GridPane gridpane;
 
     private ScheduledExecutorService timer;
     private VideoCapture capture;
+    static String[] dataToScene2;
+    static String url;
 
-    String[][] arrMenu = {
+    final static String[][] arrMenu = {
             {"PINKLEMONADE", "39", "x", "y"}, {"MATCHA FRAPPE", "49", "x", "y"}, {"WHITE CHOC MACCHIATO", "49", "x", "y"}, {"LYNCHEE JUICE", "29", "x", "y"},
             {"STRAWBERRY MILLE CREPR", "69", "x", "y"}, {"WARM CHOCOLATE CHIP PANOOKIE", "79", "x", "y"}, {"MATHCA MILLE CREPE", "169", "x", "y"}, {"DARK CHOCOLATE PRAPPE", "49", "x", "y"},
             {"HONEY TOAST", "109", "x", "y"}, {"FIGGY PUDDING", "89", "x", "y"}, {"CHOCOLATE MUD BROWNIE", "79", "x", "y"}, {"TWO-TONE KAKIGORI", "139", "x", "y"}};
 
-    public void initialize()
-    {
+    public void initialize() {
         this.capture = new VideoCapture();
         this.capture.open(0);
 
@@ -110,7 +120,7 @@ public class Scan1Controller {
                     BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(new BufferedImageLuminanceSource(img)));
                     Result qr = new MultiFormatReader().decode(binaryBitmap);
                     if (qr != null) {
-                        String url = qr.getText();
+                        url = qr.getText();
                         System.out.println("Scand QRorder from " + url);
                         stopAcquisition();
 
@@ -190,6 +200,7 @@ public class Scan1Controller {
                                 mk = new Mat(bwim, roi);
                                 // Detace order
                                 int allPixels = mk.rows() * mk.cols();
+//                                System.out.println("NO. all pixels => " + allPixels);
 
                                 // Valid
                                 // Get value pixel
@@ -199,15 +210,20 @@ public class Scan1Controller {
                                         double[] check = mk.get(row, col);
                                         int value = (int) check[0];
                                         // count NO. black pixel
+//                                        System.out.println("value[" + row + "," + col + "] = " + value);
                                         if (value < 100) {
                                             black++;
                                         }
                                     }
                                 }
+//                                System.out.println("NO. black pixels => " + black);
 
-//                                 Order that menu or Not (There are black pixels more than 10% of all pixels of Image)
+
+                                // Order that menu or Not (There are black pixels more than 10% of all pixels of Image)
                                 float percentBlack = (float) black / (float) allPixels * 100;
-                                if (percentBlack > 22) {
+//                                System.out.println(j + "_Percent of Black pixel => " + percentBlack);
+
+                                if (percentBlack > 15) {
                                     String itOrder = "MenuOrdered => " + arrMenu[11 - j][1] + ", " + arrMenu[11 - j][0];
                                     System.out.println(itOrder);
                                     arrLineOrderedMenu.add(arrMenu[11 - j][0]);
@@ -215,19 +231,14 @@ public class Scan1Controller {
                                     total += Integer.parseInt(arrMenu[11 - j][1]);
                                 }
 
-                                // Send ordered menu to scan2.fxml
-//                                FXMLLoader loader = new FXMLLoader();
-//                                Scan2Controller scan2Controller = loader.getController();
-//                                scan2Controller.initData();
-
-
-//                                 Print mini box
+                                // Print mini box
                                 aMk[j] = mat2Img(mk);
                                 String pathname = "out/minibox/minibox_" + j;
                                 File fJpg = new File(pathname + ".jpg");
                                 ImageIO.write(aMk[j], "jpg", fJpg);
 
                             }
+                            dataToScene2 = arrLineOrderedMenu.toArray(new String[arrLineOrderedMenu.size()]);
                             File fJpg = new File("out/qrorder.jpg");
                             ImageIO.write(img2, "jpg", fJpg);
 //                                String txt = ""+qr+"\n" + message + "\n Total price : " + total;
@@ -271,5 +282,29 @@ public class Scan1Controller {
             // release the camera
             this.capture.release();
         }
+    }
+
+    @FXML
+    public void changeToScan2(ActionEvent e) throws IOException {
+        Parent scan2SceneParent = FXMLLoader.load(getClass().getResource("scan2.fxml"));
+        Scene scan2Scene = new Scene(scan2SceneParent, 800, 600);
+
+        // get Stage information
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+
+        window.setScene(scan2Scene);
+        window.show();
+    }
+
+    @FXML
+    public void refresh(ActionEvent e) throws IOException {
+        Parent scan1SceneParent = FXMLLoader.load(getClass().getResource("scan1.fxml"));
+        Scene scan1Scene = new Scene(scan1SceneParent, 800, 600);
+
+        // get Stage information
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+
+        window.setScene(scan1Scene);
+        window.show();
     }
 }

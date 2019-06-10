@@ -1,65 +1,24 @@
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
-import java.util.ArrayList;
 import java.util.Hashtable;
 
-import org.apache.jena.atlas.io.IO;
 import org.opencv.core.*;
-import org.opencv.core.Mat;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.core.*;
-import org.opencv.videoio.VideoCapture;
-
-
-import java.awt.Graphics2D;
-import java.awt.Graphics;
-import java.awt.Color;
-import java.awt.BorderLayout;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.WritableRaster;
-import java.awt.geom.AffineTransform;
-
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Locale;
-import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
-import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import com.google.zxing.MultiFormatReader;
-import com.google.zxing.common.HybridBinarizer;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
-import com.google.zxing.Result;
-import com.google.zxing.ResultPoint;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
-import com.google.zxing.Result;
-import com.google.zxing.MultiFormatReader;
-import com.google.zxing.common.HybridBinarizer;
-import com.google.zxing.ResultPoint;
 import com.google.zxing.*;
-import com.google.zxing.common.*;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
-import com.google.zxing.*;
-import com.google.zxing.qrcode.decoder.*;
 import com.google.zxing.client.j2se.*;
 
 import javax.mail.*;
@@ -67,17 +26,12 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.swing.*;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfImportedPage;
-import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.PageSize;
-import com.itextpdf.text.pdf.PdfStamper;
 
 
 public class HelloFX extends Application {
@@ -92,201 +46,6 @@ public class HelloFX extends Application {
             {"PINKLEMONADE", "39", "x", "y"}, {"MATCHA FRAPPE", "49", "x", "y"}, {"WHITE CHOC MACCHIATO", "49", "x", "y"}, {"LYNCHEE JUICE", "29", "x", "y"},
             {"STRAWBERRY MILLE CREPR", "69", "x", "y"}, {"WARM CHOCOLATE CHIP PANOOKIE", "79", "x", "y"}, {"MATHCA MILLE CREPE", "169", "x", "y"}, {"DARK CHOCOLATE PRAPPE", "49", "x", "y"},
             {"HONEY TOAST", "109", "x", "y"}, {"FIGGY PUDDING", "89", "x", "y"}, {"CHOCOLATE MUD BROWNIE", "79", "x", "y"}, {"TWO-TONE KAKIGORI", "139", "x", "y"}};
-
-    SimpleDateFormat fmfn = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS", new Locale("uk","UK"));
-
-//    BufferedImage img, img2;
-//    java.awt.Point[] qrRct = null;
-//    ResultPoint[] aResPnt = null;
-//    Point aPnt1, aPnt2, aPnt3, aPnt4, aPnt5;
-//    BufferedImage[] aMk = new BufferedImage[12];
-
-//    BufferedImage mat2Img(Mat m) {
-//        int wd2 = m.cols();
-//        int hg2 = m.rows();
-//        int type = BufferedImage.TYPE_3BYTE_BGR;
-//        if(m.channels() == 1) type = BufferedImage.TYPE_BYTE_GRAY;
-//        BufferedImage img2 = new BufferedImage(wd2, hg2, type);
-//        WritableRaster ras2 = img2.getRaster();
-//        DataBufferByte buf2 = (DataBufferByte) ras2.getDataBuffer();
-//        byte[] dat2 = buf2.getData();
-//        m.get(0, 0, dat2);
-//        return img2;
-//    }
-
-//    void testCAM() {
-//        Mat mat = new Mat();
-//        VideoCapture cam = new VideoCapture(0);
-//        if (cam.isOpened()) {
-//            img2 = null;
-//            if (cam.read(mat)) {
-//                int w = mat.cols();
-//                int h = mat.rows();
-//                qrRct = null;
-//                aPnt1 = aPnt2 = aPnt3 = null;
-//                img = mat2Img(mat);
-//                System.out.println("W : " + mat.cols() + ", H : " + mat.rows());
-//            }
-//        } else {
-//            System.out.println("Not found cam");
-//        }
-//        cam.release();
-
-//    }
-    /////////////////////////////// Part 1.5 //////////////////////////////////////
-    void crop() throws NotFoundException, IOException {
-        ArrayList<String> arrLineOrderedMenu = new ArrayList<String>();
-
-        // Create Menu
-        Menu[] menu = new Menu[10];
-        menu[0] = new Menu(1, "HONEY TOAST", 109);
-        menu[1] = new Menu(2, "FIGGY PUDDING", 89);
-        menu[2] = new Menu(3, "STRAWBERRY MILLE CREPE", 69);
-        menu[3] = new Menu(4, "WARM CHOCOLATE CHIP PANOOKIE", 79);
-        menu[4] = new Menu(5, "CHOCOLATE MUD BROWNIE", 79);
-        menu[5] = new Menu(6, "TWO-TONE KAKIGORI", 139);
-        menu[6] = new Menu(7, "MATCHA MILLE CREPE", 169);
-        menu[7] = new Menu(8, "DARK CHOCOLATE FRAPPE", 49);
-        menu[8] = new Menu(9, "PINK LEMONADE", 39);
-        menu[9] = new Menu(10, "MATCHA FRAPPE", 49);
-
-        String pathImage = "cafeOne2.jpg";
-        // Detect QRcode
-        File fImg = new File(pathImage);
-        System.out.println("FILE: " + fImg + " : " + fImg.exists());
-        BufferedImageLuminanceSource image = new BufferedImageLuminanceSource(ImageIO.read(new FileInputStream(fImg)));
-        BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(image));
-
-
-        String tmp = "1234567890";
-        int width = 250;
-        String nameFile = "number1";
-//        QRcode.create(tmp,width,nameFile);
-
-
-        int imgWitdth = image.getWidth();
-        int imgHeight = image.getHeight();
-
-
-        Result qr = new MultiFormatReader().decode(binaryBitmap);
-        String url = qr.getText();
-        ResultPoint[] pts = qr.getResultPoints();
-        System.out.println("TEXT: " + url);
-
-        // Extract conner QRcode
-        float xBottomLeft = pts[0].getX();
-        float yBottomLeft = pts[0].getY();
-        float xTopLeft = pts[1].getX();
-        float yTopLeft = pts[1].getY();
-        float xTopRight = pts[2].getX();
-
-        for (ResultPoint pt : pts) {
-            System.out.println(" " + pt.getX() + "," + pt.getY());
-        }
-
-        // 1 cent = how many pixels?
-        float widthQRcode = xTopRight - xBottomLeft;
-        float pixelCent = widthQRcode / 2;
-        float centerToEdge = widthQRcode / 4;
-        float xImageToEdgeQRcode = xBottomLeft - centerToEdge;
-        float yMenu9 = yBottomLeft - centerToEdge;
-
-        System.out.println("xBottomLeft : " + xBottomLeft);
-        System.out.println("yBottomLeft : " + yBottomLeft);
-        System.out.println("xTopLeft : " + xTopLeft);
-        System.out.println("yTopLeft : " + yTopLeft);
-        System.out.println("xTopRight : " + xTopRight);
-        System.out.println("widthOqcode : " + widthQRcode);
-        System.out.println("pixelCent : " + pixelCent);
-
-        Mat imageOriginal;
-        imageOriginal = Imgcodecs.imread(pathImage);
-
-        // Crop Image
-        Mat imageCrop[] = new Mat[10];
-        int xIndexMenu = 0;
-        int yIndexMenu = 0;
-
-        // Crop and show 10 menu
-        for (int i = 0; i < imageCrop.length; i++) {
-            if (i % 2 == 0) {
-                xIndexMenu = 13;
-                if (i != 0) {
-                    yIndexMenu++;
-                }
-            } else {
-                xIndexMenu = 5;
-            }
-            Rect rectCrop = new Rect((int) (xImageToEdgeQRcode + (pixelCent * xIndexMenu)), (int) (yMenu9 - (yIndexMenu * (pixelCent * 3))), (int) pixelCent, (int) pixelCent);
-            imageCrop[i] = imageOriginal.submat(rectCrop);
-
-
-            // Converting the image to gray scale and saving it in the dst matrix
-            // Creating the empty destination matrix
-            Mat grayPicture = new Mat();
-            Imgproc.cvtColor(imageCrop[i], grayPicture, Imgproc.COLOR_RGB2GRAY);
-            Mat binaryPicture = new Mat();
-            Imgproc.threshold(grayPicture, binaryPicture, 127, 255, Imgproc.THRESH_BINARY);
-
-            System.out.println("Image Loaded : " + (10 - i));
-            int allPixels = binaryPicture.rows() * binaryPicture.cols();
-            System.out.println("NO. all pixels => " + allPixels);
-
-            // Valid
-            // Get value pixel
-            int black = 0;
-            for (int row = 0; row < binaryPicture.rows(); row++) {
-                for (int col = 0; col < binaryPicture.cols(); col++) {
-                    double[] check = binaryPicture.get(row, col);
-                    int value = (int) check[0];
-                    // count NO. black pixel
-                    if (value == 0) {
-                        black++;
-                    }
-                }
-            }
-            System.out.println("NO. black pixels => " + black);
-
-            // Order that menu or Not (There are black pixels more than 10% of all pixels of Image)
-            float percentBlack = (float) black / (float) allPixels * 100;
-            System.out.println("Percent of Black pixel => " + percentBlack);
-            if (percentBlack > 10) {
-                System.out.println("!!!!!This menu is ordered.!!!!!");
-                String menuOrdered = "Menu_NO." + (10 - i);
-                System.out.println("MenuOrdered => " + menuOrdered);
-                arrLineOrderedMenu.add(menuOrdered);
-            }
-
-            // Show Image
-            printImage(binaryPicture);
-            System.out.println();
-
-        }
-//        Imgcodecs.imwrite("blank.jpg", binaryPicture);
-
-        System.out.println("===================================================");
-    }
-
-    void printImage(Mat image) throws IOException {
-        //Encoding the image
-        MatOfByte matOfByte = new MatOfByte();
-        Imgcodecs.imencode(".jpg", image, matOfByte);
-
-        //Storing the encoded Mat in a byte array
-        byte[] byteArray = matOfByte.toArray();
-
-        //Preparing the Buffered Image
-        InputStream in = new ByteArrayInputStream(byteArray);
-        BufferedImage bufImage = ImageIO.read(in);
-
-        //Instantiate JFrame
-        JFrame frame = new JFrame();
-
-        //Set Content to the JFrame
-        frame.getContentPane().add(new JLabel(new ImageIcon(bufImage)));
-        frame.pack();
-        frame.setVisible(true);
-    }
 
     /////////////////////////////// Part 2 //////////////////////////////////////
 
@@ -440,43 +199,43 @@ public class HelloFX extends Application {
         fout.close();
     }
 
-    void SendEmail(String host, int port, String username, String password) {
-        Properties prop = new Properties();
-        prop.put("mail.smtp.auth", true);
-        prop.put("mail.smtp.starttls.enable", "true");
-        prop.put("mail.smtp.host", host);
-        prop.put("mail.smtp.port", port);
-        prop.put("mail.smtp.ssl.trust", host);
-
-        Session session = Session.getInstance(prop, new Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
-            }
-        });
-        System.out.println("Set Properties and Session");
-
-        try {
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("chantapat.sun@gmail.com"));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("cafeone.official@gmail.com"));
-            message.setSubject("Try send email in helloFX ja");
-
-            String msg = "This is my first email using JavaMailer for use <http://cafeone/03/0812034283> <http://cafeone#cake> \"Order\"";
-            MimeBodyPart mimeBodyPart = new MimeBodyPart();
-            mimeBodyPart.setContent(msg, "text/html");
-
-            Multipart multipart = new MimeMultipart();
-            multipart.addBodyPart(mimeBodyPart);
-
-            message.setContent(multipart);
-
-            Transport.send(message);
-            System.out.println("Email has send.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    void SendEmail(String host, int port, String username, String password) {
+//        Properties prop = new Properties();
+//        prop.put("mail.smtp.auth", true);
+//        prop.put("mail.smtp.starttls.enable", "true");
+//        prop.put("mail.smtp.host", host);
+//        prop.put("mail.smtp.port", port);
+//        prop.put("mail.smtp.ssl.trust", host);
+//
+//        Session session = Session.getInstance(prop, new Authenticator() {
+//            @Override
+//            protected PasswordAuthentication getPasswordAuthentication() {
+//                return new PasswordAuthentication(username, password);
+//            }
+//        });
+//        System.out.println("Set Properties and Session");
+//
+//        try {
+//            Message message = new MimeMessage(session);
+//            message.setFrom(new InternetAddress("chantapat.sun@gmail.com"));
+//            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("cafeone.official@gmail.com"));
+//            message.setSubject("Try send email in helloFX ja");
+//
+//            String msg = "This is my first email using JavaMailer for use <http://cafeone/03/0812034283> <http://cafeone#cake> \"Order\"";
+//            MimeBodyPart mimeBodyPart = new MimeBodyPart();
+//            mimeBodyPart.setContent(msg, "text/html");
+//
+//            Multipart multipart = new MimeMultipart();
+//            multipart.addBodyPart(mimeBodyPart);
+//
+//            message.setContent(multipart);
+//
+//            Transport.send(message);
+//            System.out.println("Email has send.");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     void ReceiveEmail(String host, int port, String username, String password) {
         try {
@@ -537,12 +296,7 @@ public class HelloFX extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-//        String javaVersion = System.getProperty("java.version");
-//        String javafxVersion = System.getProperty("javafx.version");
-//        Label l = new Label("Hello, JavaFX " + javafxVersion + ", running on Java " + javaVersion + ".");
-//        Scene scene = new Scene(new StackPane(l), 640, 480);
-//        stage.setScene(scene);
-        Parent root = FXMLLoader.load(getClass().getResource("/Scan2.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/Scan1.fxml"));
         stage.setTitle("QR Order");
         stage.setScene(new Scene(root, 800, 600));
 
@@ -551,25 +305,6 @@ public class HelloFX extends Application {
 
     public static void main(String[] args) throws Exception {
         System.out.println("Hello World");
-
-
-//        System.out.println("======================= Connect camera ============================");
-//        HelloFX hel = new HelloFX();
-//        hel.testCAM();
-
-//        System.out.println("======================= Write RDF ============================");
-//        String fileName = "testRDF";
-//        String pathName = "out/" + fileName;
-//
-//        String url = "http://cafeone.com/";
-//        String predicate = "http://cafeone.com#";
-//
-//        Rdf rdf = new Rdf();
-//        rdf.createModel();
-//
-//        rdf.addStatement(url, predicate + "Lemon", "Ordered");
-//        rdf.writeRDF(pathName);
-//        System.out.println("Finished");
 
 //        System.out.println("====================== Read RDF ===============================");
 //        String destPath = "out/testRDF.ttl";
@@ -591,11 +326,6 @@ public class HelloFX extends Application {
 //        HelloFX helloFXNOTE = new HelloFX();
 //        helloFXNOTE.createQRnote();
 //        System.out.println("Create QRnote finished");
-
-//        System.out.println("======================= Crop QRnote ============================");
-//        HelloFX helloFXNOTE = new HelloFX();
-//        helloFXNOTE.crop();
-//        System.out.println("Crop QRnote finished");
 
         launch();
     }
