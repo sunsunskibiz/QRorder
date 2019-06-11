@@ -23,7 +23,7 @@
    <children>
       <Label text="Main Page" GridPane.columnIndex="1" GridPane.columnSpan="2">
          <font>
-            <Font name="Book_Akhanake" size="41.0" />
+            <Font name="Book_Akhanake" size="48.0" />
          </font>
          <GridPane.margin>
             <Insets left="250.0" />

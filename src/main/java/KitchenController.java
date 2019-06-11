@@ -1,14 +1,75 @@
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 import javax.mail.*;
 import javax.mail.internet.MimeBodyPart;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
 public class KitchenController implements Initializable {
+    @FXML
+    private TableView<KitchenTable> prepareTable;
+    @FXML
+    private TableView<KitchenTable> serveTable;
+
     public void initialize(URL url, ResourceBundle rb) {
         ReceiveEmail("smtp.gmail.com", 993, "cafeone.kitchen@gmail.com", "Cafeone2019");
+        fillPrepareTable();
+        fillServeTable();
+
+    }
+
+    void fillServeTable() {
+        // TODO
+        TableColumn tableNO = new TableColumn("TABLE NO.");
+        TableColumn order = new TableColumn("ORDER");
+
+        serveTable.getColumns().addAll(tableNO, order);
+
+        final ObservableList<KitchenTable> data = FXCollections.observableArrayList(
+                new KitchenTable("01", "CHOCOLATE MUD BROWNIE")
+        );
+
+
+        //Step : 3#  Associate data with columns
+        tableNO.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("tableNO"));
+        order.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("order"));
+
+
+        //Step 4: add data inside table
+        serveTable.setItems(data);
+    }
+    void fillPrepareTable() {
+        // TODO
+        TableColumn tableNO = new TableColumn("TABLE NO.");
+        TableColumn order = new TableColumn("ORDER");
+
+        prepareTable.getColumns().addAll(tableNO, order);
+//        serveTable.getColumns().addAll(tableNO, order);
+
+
+        final ObservableList<KitchenTable> data = FXCollections.observableArrayList(
+                new KitchenTable("01", "WARM CHOCOLATE CHIP PANOOKIE"),
+                new KitchenTable("05", "FIGGY PUDDING"),
+                new KitchenTable("05", "CHOCOLATE MUD BROWNIE")
+        );
+
+
+        //Step : 3#  Associate data with columns
+        tableNO.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("tableNO"));
+        order.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("order"));
+
+
+        //Step 4: add data inside table
+        prepareTable.setItems(data);
+//        serveTable.setItems(data);
     }
 
     void ReceiveEmail(String host, int port, String username, String password) {
