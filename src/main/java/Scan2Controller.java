@@ -114,7 +114,7 @@ public class Scan2Controller implements Initializable {
         // contain to RDF file
         // Object mean
         //      - Ordered => that Menu is ordered.
-        //      - None => that Menu is not ordered.
+        //      - Served => that Menu  is served.
         //      - Paid => that Menu is paid Or this RDF file is billed.
         Rdf table_no = new Rdf();
         table_no.createModel();
@@ -125,7 +125,7 @@ public class Scan2Controller implements Initializable {
         table_no.writeRDF(pathName);
         System.out.println("------------- Write RDF file ----------------");
 
-        SendEmail("smtp.gmail.com", 587, "cafeone.official@gmail.com", "cafeOne2019", "cafeone.kitchen@gmail.com" );
+        SendEmail("smtp.gmail.com", 587, "cafeone.official@gmail.com", "Cafeone2019", "cafeone.kitchen@gmail.com" );
         System.out.println("------------- Email send ----------------");
 
         // Go to main scene
