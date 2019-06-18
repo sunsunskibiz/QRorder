@@ -13,18 +13,43 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public class KitchenController implements Initializable {
     @FXML
     private TableView<KitchenTable> prepareTable;
     @FXML
     private TableView<KitchenTable> serveTable;
+    private ArrayList<String> prepare;
+    private ArrayList<String> serve;
 
     public void initialize(URL url, ResourceBundle rb) {
-        ReceiveEmail("smtp.gmail.com", 993, "cafeone.kitchen@gmail.com", "Cafeone2019");
-        fillPrepareTable();
-        fillServeTable();
+        // Prepare table
+        prepare = new ArrayList<>();
+        TableColumn tableNO = new TableColumn("TABLE NO.");
+        TableColumn order = new TableColumn("ORDER");
+        prepareTable.getColumns().addAll(tableNO, order);
+        tableNO.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("tableNO"));
+        order.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("order"));
 
+        // Fetch email every 5 second
+        Runnable runnable = new Runnable() {
+            public void run() {
+                // task to run goes here
+                ReceiveEmail("smtp.gmail.com", 993, "cafeone.kitchen@gmail.com", "Cafeone2019");
+                System.out.println("===========================NEW=================================");
+                fillPrepareTable();
+                fillServeTable();
+                prepare.clear();
+            }
+        };
+        ScheduledExecutorService service = Executors
+                .newSingleThreadScheduledExecutor();
+        service.scheduleAtFixedRate(runnable, 0, 5, TimeUnit.SECONDS);
     }
+
 
     void fillServeTable() {
         // TODO
@@ -47,29 +72,14 @@ public class KitchenController implements Initializable {
         serveTable.setItems(data);
     }
     void fillPrepareTable() {
-        // TODO
-        TableColumn tableNO = new TableColumn("TABLE NO.");
-        TableColumn order = new TableColumn("ORDER");
-
-        prepareTable.getColumns().addAll(tableNO, order);
-//        serveTable.getColumns().addAll(tableNO, order);
-
-
-        final ObservableList<KitchenTable> data = FXCollections.observableArrayList(
-                new KitchenTable("01", "WARM CHOCOLATE CHIP PANOOKIE"),
-                new KitchenTable("05", "FIGGY PUDDING"),
-                new KitchenTable("05", "CHOCOLATE MUD BROWNIE")
-        );
-
-
-        //Step : 3#  Associate data with columns
-        tableNO.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("tableNO"));
-        order.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("order"));
-
-
-        //Step 4: add data inside table
+        ArrayList<KitchenTable> pp = new ArrayList<>();
+        for (String i : prepare) {
+            String table = i.substring(0, 2);
+            String menu = i.substring(2);
+            pp.add(new KitchenTable(table, menu));
+        }
+        ObservableList<KitchenTable> data = FXCollections.observableArrayList(pp);
         prepareTable.setItems(data);
-//        serveTable.setItems(data);
     }
 
     void ReceiveEmail(String host, int port, String username, String password) {
@@ -87,10 +97,15 @@ public class KitchenController implements Initializable {
 
             // Create folder
             Folder folder = store.getFolder("INBOX");
-            folder.open(Folder.READ_ONLY);
+            folder.open(Folder.READ_WRITE);
 
             // Fetch massage from folder
             Message[] messages = folder.getMessages();
+
+//            // Move to folder test
+//            Folder recieved = store.getFolder("recieved");
+//            recieved.open(Folder.READ_WRITE);
+//            folder.copyMessages(messages, recieved);
 
             for (int i = 0, n = messages.length; i < n; i++) {
                 Message individualmsg = messages[i];
@@ -118,6 +133,19 @@ public class KitchenController implements Initializable {
                     System.out.println("--------> image/jpeg");
                 }
                 System.out.println("Content: " + messageContent);
+
+                // Add in ArrayList prepare
+                String tableNO = individualmsg.getSubject().substring(1, 3);
+                String[] arr = messageContent.split("\n");
+                for (String s : arr) {
+                    String ss = s.substring(0, s.length()-2);
+                    String sss = tableNO + ss;
+                    prepare.add(sss);
+                }
+
+//                // set the DELETE flag to true
+//                individualmsg.setFlag(Flags.Flag.DELETED, true);
+//                System.out.println("Marked DELETE for message: " + individualmsg.getSubject());
             }
             // Close all the objects
             folder.close(false);

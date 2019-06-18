@@ -62,7 +62,7 @@
             <Insets left="150.0" top="70.0" />
          </GridPane.margin>
       </Label>
-      <Label layoutX="249.0" layoutY="103.0" text="01" GridPane.columnIndex="1">
+      <Label layoutX="249.0" layoutY="103.0" text="15" GridPane.columnIndex="1">
          <font>
             <Font size="28.0" />
          </font>

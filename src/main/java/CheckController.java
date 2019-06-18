@@ -26,11 +26,13 @@ public class CheckController implements Initializable {
         TableColumn status = new TableColumn("STATUS");
 
         myTable.getColumns().addAll(index, menu, amt, price, status);
+//        myTable.getColumns().addAll(index, menu, price, status);
         final ObservableList<CheckTable> data = FXCollections.observableArrayList(
-                new CheckTable("01", "FIGGY PUDDING", "2", "178", "Served"),
-                new CheckTable("02", "WARM CHOCOLATE CHIP PANOOKIE", "1", "79", "Served"),
-                new CheckTable("03", "HONEY TOAST", "1", "109", "Served"),
-                new CheckTable("", "ALL", "4", "475", "")
+                new CheckTable("01", "LYNCHEE JUICE", "1", "29", "Served"),
+                new CheckTable("02", "WHITE CHOC MACCHIATO", "1", "49", "Served"),
+                new CheckTable("03", "MATCHA FRAPPE", "1", "49", "Served"),
+                new CheckTable("04", "PINKLEMONADE", "1", "39", "Served"),
+                new CheckTable("", "ALL", "4", "166", "")
         );
 
 

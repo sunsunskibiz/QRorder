@@ -15,6 +15,18 @@ public class CheckTable {
         this.status = new SimpleStringProperty(status);
     }
 
+    public String getAmt() {
+        return amt.get();
+    }
+
+    public SimpleStringProperty amtProperty() {
+        return amt;
+    }
+
+    public void setAmt(String amt) {
+        this.amt.set(amt);
+    }
+
     public String getIndex() {
         return index.get();
     }
@@ -37,18 +49,6 @@ public class CheckTable {
 
     public void setMenu(String menu) {
         this.menu.set(menu);
-    }
-
-    public String getAmout() {
-        return amt.get();
-    }
-
-    public SimpleStringProperty amoutProperty() {
-        return amt;
-    }
-
-    public void setAmout(String amt) {
-        this.amt.set(amt);
     }
 
     public String getPrice() {

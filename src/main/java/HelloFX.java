@@ -294,15 +294,6 @@ public class HelloFX extends Application {
 //        }
 //    }
 
-    @Override
-    public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/main.fxml"));
-        stage.setTitle("QR Order");
-        stage.setScene(new Scene(root, 800, 600));
-
-        stage.show();
-    }
-
     static void listFilesForFolder(final File folder) {
         for (final File fileEntry : folder.listFiles()) {
             if (fileEntry.isDirectory()) {
@@ -311,6 +302,51 @@ public class HelloFX extends Application {
                 System.out.println(fileEntry.getName());
             }
         }
+    }
+
+//    void SendEmail(String host, int port, String username, String password, String to) {
+//        Properties prop = new Properties();
+//        prop.put("mail.smtp.auth", true);
+//        prop.put("mail.smtp.starttls.enable", "true");
+//        prop.put("mail.smtp.host", host);
+//        prop.put("mail.smtp.port", port);
+//        prop.put("mail.smtp.ssl.trust", host);
+//
+//        Session session = Session.getInstance(prop, new Authenticator() {
+//            @Override
+//            protected PasswordAuthentication getPasswordAuthentication() {
+//                return new PasswordAuthentication(username, password);
+//            }
+//        });
+//
+//        try {
+//            Message message = new MimeMessage(session);
+//            message.setFrom(new InternetAddress(username));
+//            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+//            message.setSubject("T07_20190611105645");
+//
+//            String msg = "DARK CHOCOLATE FRAPPE\nMATCHA MILLIE CREPE\nWARM CHOCOLATE CHIP PANOOKIE\nWHITE CHOC MACCHIATO";
+//            MimeBodyPart mimeBodyPart = new MimeBodyPart();
+//            mimeBodyPart.setContent(msg, "text/html");
+//
+//            Multipart multipart = new MimeMultipart();
+//            multipart.addBodyPart(mimeBodyPart);
+//
+//            message.setContent(multipart);
+//
+//            Transport.send(message);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+
+    @Override
+    public void start(Stage stage) throws IOException {
+        Parent root = FXMLLoader.load(getClass().getResource("/kitchen.fxml"));
+        stage.setTitle("QR Order");
+        stage.setScene(new Scene(root, 800, 600));
+
+        stage.show();
     }
 
     public static void main(String[] args) throws Exception {
@@ -324,7 +360,7 @@ public class HelloFX extends Application {
 
 //        System.out.println("======================= Send Email ============================");
 //        HelloFX helloFXEmail = new HelloFX();
-//        helloFXEmail.SendEmail("smtp.gmail.com", 587, "cafeone.official@gmail.com", "cafeOne2019" );
+//        helloFXEmail.SendEmail("smtp.gmail.com", 587, "cafeone.official@gmail.com", "Cafeone2019", "cafeone.kitchen@gmail.com" );
 //        System.out.println("Send email success");
 
 //        System.out.println("======================= Recieve Email ============================");
