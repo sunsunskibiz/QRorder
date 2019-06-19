@@ -26,7 +26,7 @@
    <children>
       <TableView fx:id="prepareTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
       <TableView fx:id="serveTable" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-      <Button mnemonicParsing="false" prefWidth="327.0" text="Serve" GridPane.columnIndex="1" GridPane.rowIndex="2">
+      <Button fx:id="serveButton" mnemonicParsing="false" onAction="#servePressed" prefWidth="327.0" text="Serve" GridPane.columnIndex="1" GridPane.rowIndex="2">
          <font>
             <Font name="Book_Akhanake" size="32.0" />
          </font>
