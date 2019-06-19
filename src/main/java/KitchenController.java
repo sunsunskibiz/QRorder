@@ -34,6 +34,13 @@ public class KitchenController implements Initializable {
         tableNO.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("tableNO"));
         order.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("order"));
 
+        // Served table
+        serve = new ArrayList<>();
+        TableColumn tableNOSrv = new TableColumn("TABLE NO.");
+        TableColumn orderSrv = new TableColumn("ORDER");
+        serveTable.getColumns().addAll(tableNOSrv, orderSrv);
+        tableNOSrv.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("tableNO"));
+        orderSrv.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("order"));
         // Fetch email every 5 second
         Runnable runnable = new Runnable() {
             public void run() {
@@ -42,7 +49,7 @@ public class KitchenController implements Initializable {
                 System.out.println("===========================NEW=================================");
                 fillPrepareTable();
                 fillServeTable();
-                prepare.clear();
+//                prepare.clear();
             }
         };
         ScheduledExecutorService service = Executors
@@ -50,27 +57,13 @@ public class KitchenController implements Initializable {
         service.scheduleAtFixedRate(runnable, 0, 5, TimeUnit.SECONDS);
     }
 
-
     void fillServeTable() {
-        // TODO
-        TableColumn tableNO = new TableColumn("TABLE NO.");
-        TableColumn order = new TableColumn("ORDER");
-
-        serveTable.getColumns().addAll(tableNO, order);
-
         final ObservableList<KitchenTable> data = FXCollections.observableArrayList(
                 new KitchenTable("01", "CHOCOLATE MUD BROWNIE")
         );
-
-
-        //Step : 3#  Associate data with columns
-        tableNO.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("tableNO"));
-        order.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("order"));
-
-
-        //Step 4: add data inside table
         serveTable.setItems(data);
     }
+
     void fillPrepareTable() {
         ArrayList<KitchenTable> pp = new ArrayList<>();
         for (String i : prepare) {
@@ -102,10 +95,10 @@ public class KitchenController implements Initializable {
             // Fetch massage from folder
             Message[] messages = folder.getMessages();
 
-//            // Move to folder test
-//            Folder recieved = store.getFolder("recieved");
-//            recieved.open(Folder.READ_WRITE);
-//            folder.copyMessages(messages, recieved);
+            // Move to folder test
+            Folder recieved = store.getFolder("recieved");
+            recieved.open(Folder.READ_WRITE);
+            folder.copyMessages(messages, recieved);
 
             for (int i = 0, n = messages.length; i < n; i++) {
                 Message individualmsg = messages[i];
@@ -138,14 +131,17 @@ public class KitchenController implements Initializable {
                 String tableNO = individualmsg.getSubject().substring(1, 3);
                 String[] arr = messageContent.split("\n");
                 for (String s : arr) {
+                    System.out.println(s);
                     String ss = s.substring(0, s.length()-2);
                     String sss = tableNO + ss;
-                    prepare.add(sss);
+                    if (prepare.indexOf(sss) == -1) {
+                        prepare.add(sss);
+                    }
                 }
 
-//                // set the DELETE flag to true
-//                individualmsg.setFlag(Flags.Flag.DELETED, true);
-//                System.out.println("Marked DELETE for message: " + individualmsg.getSubject());
+                // set the DELETE flag to true
+                individualmsg.setFlag(Flags.Flag.DELETED, true);
+                System.out.println("Marked DELETE for message: " + individualmsg.getSubject());
             }
             // Close all the objects
             folder.close(false);
