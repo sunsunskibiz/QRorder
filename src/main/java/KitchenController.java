@@ -13,7 +13,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import javax.mail.*;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -48,6 +51,7 @@ public class KitchenController implements Initializable {
         serveTable.getColumns().addAll(tableNOSrv, orderSrv);
         tableNOSrv.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("tableNO"));
         orderSrv.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("order"));
+
         // Fetch email every 5 second
         Runnable runnable = new Runnable() {
             public void run() {
@@ -173,7 +177,44 @@ public class KitchenController implements Initializable {
         if (prepareTable.getSelectionModel().getSelectedItem() != null) {
             String s = prepareTable.getSelectionModel().getSelectedItem().getTableNO() + prepareTable.getSelectionModel().getSelectedItem().getOrder();
             serve.add(s);
+            SendEmail("smtp.gmail.com", 587, "cafeone.kitchen@gmail.com", "Cafeone2019", "cafeone.official@gmail.com", "served_" + s);
             prepare.remove(prepare.indexOf(s));
+            System.out.println("Email Send");
+        }
+    }
+
+    void SendEmail(String host, int port, String username, String password, String to, String content) {
+        Properties prop = new Properties();
+        prop.put("mail.smtp.auth", true);
+        prop.put("mail.smtp.starttls.enable", "true");
+        prop.put("mail.smtp.host", host);
+        prop.put("mail.smtp.port", port);
+        prop.put("mail.smtp.ssl.trust", host);
+
+        Session session = Session.getInstance(prop, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(username));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+            message.setSubject(content);
+
+            MimeBodyPart mimeBodyPart = new MimeBodyPart();
+            mimeBodyPart.setContent(content, "text/html");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(mimeBodyPart);
+
+            message.setContent(multipart);
+
+            Transport.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
