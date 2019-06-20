@@ -120,9 +120,18 @@ public class MainController implements Initializable {
                 Message individualmsg = messages[i];
                 System.out.println("==========================From main=============================");
                 System.out.println("==========================Print individual messages=============================");
-                System.out.println("No# " + (i + 1));
-                System.out.println("Email Subejct: " + individualmsg.getSubject());
-                System.out.println("Sender: " + individualmsg.getFrom()[0]);
+                String subject = individualmsg.getSubject();
+                String tableNO = subject.substring(7, 9);
+                String orderServed = subject.substring(9);
+                System.out.println("Table NO : " + tableNO);
+                System.out.println("Order served : " + orderServed);
+
+                for (int j = 0; j<order.size(); j++) {
+                    String tbNO = order.get(j).substring(1,3);
+                    if (tbNO.equals(tableNO)) {
+                        System.out.println(order.get(j));
+                    }
+                }
 
 //                // set the DELETE flag to true
 //                individualmsg.setFlag(Flags.Flag.DELETED, true);
