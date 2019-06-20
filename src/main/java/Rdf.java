@@ -121,7 +121,9 @@ public class Rdf {
              System.out.print(" " + p + " ");
 
              String[] menuStatusEachOne = new String[2];
-             menuStatusEachOne[0] = p.substring(p.length()-1, p.length());
+             // Menu name
+             menuStatusEachOne[0] = p.substring(19);
+             // Status
              if (object instanceof Resource) {
                  System.out.print(o);
                  menuStatusEachOne[1] = o;
