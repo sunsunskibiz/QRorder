@@ -11,6 +11,7 @@ import javafx.scene.control.TableView;
 import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import org.apache.jena.vocabulary.RDF;
 
 import javax.mail.*;
 import javax.mail.internet.MimeBodyPart;
@@ -30,10 +31,11 @@ public class MainController implements Initializable {
 
     private ArrayList<String> order;
     String[] arrOrdered;
+    String pathname = "D:\\newProject\\out\\now";
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        final File folder = new File("D:\\newProject\\out\\now");
+        File folder = new File(pathname);
         order = new ArrayList<>();
         TableColumn table = new TableColumn("Table");
         TableColumn time = new TableColumn("Time");
@@ -126,10 +128,17 @@ public class MainController implements Initializable {
                 System.out.println("Table NO : " + tableNO);
                 System.out.println("Order served : " + orderServed);
 
+                tableNO = "39";
                 for (int j = 0; j<order.size(); j++) {
                     String tbNO = order.get(j).substring(1,3);
                     if (tbNO.equals(tableNO)) {
-                        System.out.println(order.get(j));
+                        String pn = pathname + "\\" + order.get(j);
+                        Rdf rdf = new Rdf();
+                        if (rdf.changeStatusToserved(pn, orderServed)) {
+                            System.out.println("changeStatusToserved success.");
+                        } else {
+                            System.out.println("changeStatusToserved failed");
+                        }
                     }
                 }
 
