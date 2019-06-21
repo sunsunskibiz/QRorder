@@ -100,9 +100,9 @@ public class Rdf {
 
     }
 
-     public ArrayList<String[]> listMenuStatus(String file) {
+     public ArrayList<String> listMenuStatus(String file) {
          model = readModel(file);
-         ArrayList<String[]> menuStatus = new ArrayList<String[]>();
+         ArrayList<String> menuStatus = new ArrayList<String>();
          // list the statements in the graph
          StmtIterator iter = model.listStatements();
 
@@ -116,23 +116,23 @@ public class Rdf {
              String s = subject.toString();
              String p = predicate.toString();
              String o = object.toString();
+//
+//             System.out.print(s);
+//             System.out.print(" " + p + " ");
 
-             System.out.print(s);
-             System.out.print(" " + p + " ");
-
-             String[] menuStatusEachOne = new String[2];
+             String menuStatusEachOne;
              // Menu name
-             menuStatusEachOne[0] = p.substring(19);
+             menuStatusEachOne = p.substring(19);
              // Status
              if (object instanceof Resource) {
-                 System.out.print(o);
-                 menuStatusEachOne[1] = o;
+//                 System.out.print(o);
+                 menuStatusEachOne = menuStatusEachOne + "|" + o;
              } else {
                  // object is a literal
-                 System.out.print(" \"" + o + "\"");
-                 menuStatusEachOne[1] = "\"" + o + "\"";
+//                 System.out.print(" \"" + o + "\"");
+                 menuStatusEachOne = menuStatusEachOne + "|" + "\"" + o + "\"";
              }
-             System.out.println(" .");
+//             System.out.println(" .");
              menuStatus.add(menuStatusEachOne);
          }
          return menuStatus;

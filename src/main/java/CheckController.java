@@ -13,7 +13,9 @@ import java.util.ResourceBundle;
 public class CheckController implements Initializable {
     @FXML
     private TableView<CheckTable> myTable;
-    private ArrayList<String[]> order;
+    private String[] orderArr;
+    private String[][] arrMenu = HelloFX.arrMenu;
+    private String destPath = "D:\\newProject\\out\\now\\T39_20190610104915.ttl";
 
 
     public void initialize(URL url, ResourceBundle rb) {
@@ -30,20 +32,28 @@ public class CheckController implements Initializable {
         status.setCellValueFactory(new PropertyValueFactory<CheckTable,String>("status"));
 
         fillPrepareTable();
-
-        String destPath = "D:\\newProject\\out\\now\\T39_20190610104915.ttl";
-        Rdf rdfRead = new Rdf();
-        order = rdfRead.listMenuStatus(destPath);
     }
 
     void fillPrepareTable() {
-        ObservableList<CheckTable> data = FXCollections.observableArrayList(
-                new CheckTable("01", "LYNCHEE JUICE", "1", "29", "Served"),
-                new CheckTable("02", "WHITE CHOC MACCHIATO", "1", "49", "Served"),
-                new CheckTable("03", "MATCHA FRAPPE", "1", "49", "Served"),
-                new CheckTable("04", "PINKLEMONADE", "1", "39", "Served"),
-                new CheckTable("", "ALL", "4", "166", "")
-        );
+        ArrayList<CheckTable> ot = new ArrayList<>();
+        int sum = 0;
+        Rdf rdfRead = new Rdf();
+        ArrayList<String> order = rdfRead.listMenuStatus(destPath);
+        orderArr = order.toArray(new String[order.size()]);
+        for (int k=0; k<order.size(); k++) {
+            String menuRDF = orderArr[k].substring(0, orderArr[k].indexOf("|"));
+            String statusRDF = orderArr[k].substring(orderArr[k].indexOf("|") + 2, orderArr[k].length()-1);
+            for (String[] arrS : arrMenu) {
+                if (menuRDF.equals(arrS[0])) {
+                    ot.add(new CheckTable(Integer.toString(k+1), menuRDF, "1", arrS[1], statusRDF));
+                    if (statusRDF.equals("Served"))
+                        sum += Integer.parseInt(arrS[1]);
+                }
+            }
+        }
+        ot.add(new CheckTable("", "ALL", "", Integer.toString(sum), ""));
+
+        ObservableList<CheckTable> data = FXCollections.observableArrayList(ot);
         myTable.setItems(data);
     }
 }

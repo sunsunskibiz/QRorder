@@ -35,11 +35,10 @@ public class HelloFX extends Application {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-    int waitCnt = 0;
-    String[][] arrMenu = {
-            {"PINKLEMONADE", "39", "x", "y"}, {"MATCHA FRAPPE", "49", "x", "y"}, {"WHITE CHOC MACCHIATO", "49", "x", "y"}, {"LYNCHEE JUICE", "29", "x", "y"},
-            {"STRAWBERRY MILLE CREPR", "69", "x", "y"}, {"WARM CHOCOLATE CHIP PANOOKIE", "79", "x", "y"}, {"MATHCA MILLE CREPE", "169", "x", "y"}, {"DARK CHOCOLATE PRAPPE", "49", "x", "y"},
-            {"HONEY TOAST", "109", "x", "y"}, {"FIGGY PUDDING", "89", "x", "y"}, {"CHOCOLATE MUD BROWNIE", "79", "x", "y"}, {"TWO-TONE KAKIGORI", "139", "x", "y"}};
+    final static String[][] arrMenu = {
+            {"PINKLEMONADE", "39", "x", "y"}, {"MATCHA_FRAPPE", "49", "x", "y"}, {"WHITE_CHOC_MACCHIATO", "49", "x", "y"}, {"LYNCHEE_JUICE", "29", "x", "y"},
+            {"STRAWBERRY_MILLE_CREPR", "69", "x", "y"}, {"WARM_CHOCOLATE_CHIP_PANOOKIE", "79", "x", "y"}, {"MATHCA_MILLE_CREPE", "169", "x", "y"}, {"DARK_CHOCOLATE_PRAPPE", "49", "x", "y"},
+            {"HONEY_TOAST", "109", "x", "y"}, {"FIGGY_PUDDING", "89", "x", "y"}, {"CHOCOLATE_MUD_BROWNIE", "79", "x", "y"}, {"TWO-TONE_KAKIGORI", "139", "x", "y"}};
 
     /////////////////////////////// Part 2 //////////////////////////////////////
 
