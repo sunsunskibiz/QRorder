@@ -173,7 +173,7 @@ public class KitchenController implements Initializable {
     }
 
     @FXML
-    public void servePressed(ActionEvent e) throws IOException {
+    public void servePressed(ActionEvent e) {
         if (prepareTable.getSelectionModel().getSelectedItem() != null) {
             String s = prepareTable.getSelectionModel().getSelectedItem().getTableNO() + prepareTable.getSelectionModel().getSelectedItem().getOrder();
             serve.add(s);
