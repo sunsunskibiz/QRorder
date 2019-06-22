@@ -16,13 +16,16 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
+import java.nio.file.Files;
+import java.nio.file.*;
 
 public class CheckController implements Initializable {
     @FXML
     private TableView<CheckTable> myTable;
     private String[] orderArr;
     private String[][] arrMenu = HelloFX.arrMenu;
-    private String destPath = "D:\\newProject\\out\\now\\T15_20190611103433.ttl";
+    private String destPath = "D:\\newProject\\out\\now\\";
+    private String newPath = "D:\\newProject\\out\\outdate\\";
 
 
     public void initialize(URL url, ResourceBundle rb) {
@@ -45,7 +48,8 @@ public class CheckController implements Initializable {
     private void loaddataFromMain() {
         FXMLLoader loader = new FXMLLoader();
         MainController mainController = loader.getController();
-        String dp = mainController.destpath;
+        destPath = destPath + mainController.destpath;
+        newPath = newPath + mainController.destpath;
     }
 
     void fillPrepareTable() {
@@ -80,6 +84,10 @@ public class CheckController implements Initializable {
         } else {
             System.out.println("changeStatusToPaid failed");
         }
+
+        // Delete this table from main page
+        Files.move (Paths.get(destPath), Paths.get(newPath));
+        System.out.println("File renamed and moved successfully");
 
         // Back to main
         Parent mainSceneParent = FXMLLoader.load(getClass().getResource("main.fxml"));

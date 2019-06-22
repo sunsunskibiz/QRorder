@@ -84,7 +84,14 @@ public class MainController implements Initializable {
     }
 
     public void checkPressed(ActionEvent e) throws IOException {
-        destpath = mytable.getSelectionModel().getSelectedItem().gettable();
+        String dp = mytable.getSelectionModel().getSelectedItem().gettable();
+        for (int j = 0; j<order.size(); j++) {
+            String tbNO = order.get(j).substring(1, 3);
+            if (tbNO.equals(dp)) {
+                destpath = order.get(j);
+                break;
+            }
+        }
         Parent scan1SceneParent = FXMLLoader.load(getClass().getResource("check.fxml"));
         Scene scan1Scene = new Scene(scan1SceneParent, 800, 600);
         Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
