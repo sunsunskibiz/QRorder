@@ -36,11 +36,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Scan1Controller {
     @FXML
-    private Button backButton;
-    @FXML
     private ImageView currentFrame;
-    @FXML
-    private GridPane gridpane;
 
     private ScheduledExecutorService timer;
     private VideoCapture capture;

@@ -12,21 +12,21 @@ import java.util.ArrayList;
 public class Rdf {
     private Model model;
 //
-//    public static void main(String[] args) throws IOException {
-//       Rdf r = new Rdf();
-//       String pathDIR = "D:\\Project\\marvenEX\\prj01\\src\\main\\java\\tu\\myorg\\";
-//       String pathFile = pathDIR + "test.ttl";
-//        pathFile = "D:\\newProject\\out\\now\\T15_20190611103433.ttl";
-////        ArrayList<String[]> arrListOrdered = r.listMenuStatus(pathFile);
-//        if (r.changeStatusToserved(pathFile)) {
-//            System.out.println("changeStatusToserved success.");
-//        } else {
-//            System.out.println("changeStatusToserved failed");
-//        }
+    public static void main(String[] args) throws IOException {
+       Rdf r = new Rdf();
+       String pathDIR = "D:\\Project\\marvenEX\\prj01\\src\\main\\java\\tu\\myorg\\";
+       String pathFile = pathDIR + "test.ttl";
+        pathFile = "D:\\newProject\\out\\now\\T15_20190611103433.ttl";
+//        ArrayList<String[]> arrListOrdered = r.listMenuStatus(pathFile);
+        if (r.changeStatusToPaid(pathFile)) {
+            System.out.println("changeStatusToPaid success.");
+        } else {
+            System.out.println("changeStatusToPaid failed");
+        }
 //        System.out.println();
 //        System.out.println("After change to paid");
 //        r.listMenuStatus(pathFile);
-//    }
+    }
 
      public boolean changeStatusTopaid(String file) throws IOException {
          model = readModel(file);
@@ -98,6 +98,44 @@ public class Rdf {
             return false;
         }
 
+    }
+
+    public boolean changeStatusToPaid(String file) throws IOException {
+        model = readModel(file);
+        Model newModel = ModelFactory.createDefaultModel();
+
+        // list the statements in the graph
+        StmtIterator iter = model.listStatements();
+
+        // print out the predicate, subject and object of each statement
+        while (iter.hasNext()) {
+            Statement stmt      = iter.nextStatement(); // get next statement
+            Resource  subject   = stmt.getSubject();   // get the subject
+            Property  predicate = stmt.getPredicate(); // get the predicate
+            RDFNode   object    = stmt.getObject();
+
+            String statusMenu = object.toString();
+            Statement newStmt;
+            if (statusMenu.equals("Served")) {
+                newStmt = newModel.createStatement(subject, predicate, "Paid");
+            } else {
+                newStmt = newModel.createStatement(subject, predicate, object);
+            }
+            newModel.add(newStmt);
+        }
+
+        if (deleteRdfFile(file)) {
+            // now write the model in XML form to a file
+            FileWriter write = new FileWriter(file, true);
+            PrintWriter printLine = new PrintWriter(write);
+            newModel.write(printLine, "TTL");
+            printLine.close();
+
+            return true;
+        } else {
+            System.out.println("changeStatusToserved is failed");
+            return false;
+        }
     }
 
      public ArrayList<String> listMenuStatus(String file) {

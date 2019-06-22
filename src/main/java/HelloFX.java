@@ -204,7 +204,7 @@ public class HelloFX extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/check.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/main.fxml"));
         stage.setTitle("QR Order");
         stage.setScene(new Scene(root, 800, 600));
 

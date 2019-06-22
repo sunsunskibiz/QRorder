@@ -32,6 +32,7 @@ public class MainController implements Initializable {
     private ArrayList<String> order;
     String[] arrOrdered;
     String pathname = "D:\\newProject\\out\\now";
+    static String destpath;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -78,6 +79,15 @@ public class MainController implements Initializable {
         // get Stage information
         Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
 
+        window.setScene(scan1Scene);
+        window.show();
+    }
+
+    public void checkPressed(ActionEvent e) throws IOException {
+        destpath = mytable.getSelectionModel().getSelectedItem().gettable();
+        Parent scan1SceneParent = FXMLLoader.load(getClass().getResource("check.fxml"));
+        Scene scan1Scene = new Scene(scan1SceneParent, 800, 600);
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
         window.setScene(scan1Scene);
         window.show();
     }

@@ -49,7 +49,7 @@
             <Insets left="30.0" />
          </GridPane.margin>
       </Button>
-      <Button fx:id="checkButton" layoutX="405.0" layoutY="203.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="220.0" text="Check" GridPane.columnIndex="2" GridPane.rowIndex="1">
+      <Button fx:id="checkButton" layoutX="405.0" layoutY="203.0" mnemonicParsing="false" onAction="#checkPressed" prefHeight="51.0" prefWidth="220.0" text="Check" GridPane.columnIndex="2" GridPane.rowIndex="1">
          <font>
             <Font size="24.0" />
          </font>

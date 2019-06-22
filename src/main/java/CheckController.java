@@ -22,7 +22,7 @@ public class CheckController implements Initializable {
     private TableView<CheckTable> myTable;
     private String[] orderArr;
     private String[][] arrMenu = HelloFX.arrMenu;
-    private String destPath = "D:\\newProject\\out\\now\\T39_20190610104915.ttl";
+    private String destPath = "D:\\newProject\\out\\now\\T15_20190611103433.ttl";
 
 
     public void initialize(URL url, ResourceBundle rb) {
@@ -38,7 +38,14 @@ public class CheckController implements Initializable {
         price.setCellValueFactory(new PropertyValueFactory<CheckTable,String>("price"));
         status.setCellValueFactory(new PropertyValueFactory<CheckTable,String>("status"));
 
+        loaddataFromMain();
         fillPrepareTable();
+    }
+
+    private void loaddataFromMain() {
+        FXMLLoader loader = new FXMLLoader();
+        MainController mainController = loader.getController();
+        String dp = mainController.destpath;
     }
 
     void fillPrepareTable() {
@@ -66,8 +73,20 @@ public class CheckController implements Initializable {
     }
 
     @FXML
-    public void payPressed(ActionEvent e) {
+    public void payPressed(ActionEvent e) throws IOException {
+        Rdf rdf = new Rdf();
+        if (rdf.changeStatusToPaid(destPath)) {
+            System.out.println("changeStatusToPaid success.");
+        } else {
+            System.out.println("changeStatusToPaid failed");
+        }
 
+        // Back to main
+        Parent mainSceneParent = FXMLLoader.load(getClass().getResource("main.fxml"));
+        Scene mainScene = new Scene(mainSceneParent, 800, 600);
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+        window.setScene(mainScene);
+        window.show();
     }
 
     @FXML
