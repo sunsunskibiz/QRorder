@@ -151,7 +151,7 @@ public class KitchenController implements Initializable {
                 String[] arr = messageContent.split("\n");
                 for (String s : arr) {
                     System.out.println(s);
-                    String ss = s.substring(0, s.length()-2);
+                    String ss = s.substring(0, s.length()-1);
                     String sss = tableNO + ss;
                     if (prepare.indexOf(sss) == -1) {
                         prepare.add(sss);
@@ -216,5 +216,17 @@ public class KitchenController implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    public void backToMain(ActionEvent e) throws IOException {
+        Parent mainSceneParent = FXMLLoader.load(getClass().getResource("main.fxml"));
+        Scene mainScene = new Scene(mainSceneParent, 800, 600);
+
+        // get Stage information
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+
+        window.setScene(mainScene);
+        window.show();
     }
 }

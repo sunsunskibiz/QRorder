@@ -83,6 +83,19 @@ public class MainController implements Initializable {
         window.show();
     }
 
+    @FXML
+    public void changeToKitchen(ActionEvent e) throws IOException {
+        Parent scan1SceneParent = FXMLLoader.load(getClass().getResource("kitchen.fxml"));
+        Scene scan1Scene = new Scene(scan1SceneParent, 800, 600);
+
+        // get Stage information
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+
+        window.setScene(scan1Scene);
+        window.show();
+    }
+
+    @FXML
     public void checkPressed(ActionEvent e) throws IOException {
         String dp = mytable.getSelectionModel().getSelectedItem().gettable();
         for (int j = 0; j<order.size(); j++) {
@@ -130,10 +143,10 @@ public class MainController implements Initializable {
             // Fetch massage from folder
             Message[] messages = folder.getMessages();
 
-//            // Move to folder test
-//            Folder recieved = store.getFolder("recieved");
-//            recieved.open(Folder.READ_WRITE);
-//            folder.copyMessages(messages, recieved);
+            // Move to folder test
+            Folder recieved = store.getFolder("recieved");
+            recieved.open(Folder.READ_WRITE);
+            folder.copyMessages(messages, recieved);
 
             for (int i = 0, n = messages.length; i < n; i++) {
                 Message individualmsg = messages[i];
@@ -145,7 +158,6 @@ public class MainController implements Initializable {
                 System.out.println("Table NO : " + tableNO);
                 System.out.println("Order served : " + orderServed);
 
-                tableNO = "39";
                 for (int j = 0; j<order.size(); j++) {
                     String tbNO = order.get(j).substring(1,3);
                     if (tbNO.equals(tableNO)) {
@@ -159,9 +171,9 @@ public class MainController implements Initializable {
                     }
                 }
 
-//                // set the DELETE flag to true
-//                individualmsg.setFlag(Flags.Flag.DELETED, true);
-//                System.out.println("Marked DELETE for message: " + individualmsg.getSubject());
+                // set the DELETE flag to true
+                individualmsg.setFlag(Flags.Flag.DELETED, true);
+                System.out.println("Marked DELETE for message: " + individualmsg.getSubject());
             }
             // Close all the objects
             folder.close(false);
@@ -172,6 +184,4 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
     }
-
-
 }

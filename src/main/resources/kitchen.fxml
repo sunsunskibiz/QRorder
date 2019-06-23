@@ -52,5 +52,10 @@
             <Insets left="-210.0" />
          </GridPane.margin>
       </Line>
+      <Button fx:id="serveButton1" layoutX="55.0" layoutY="496.0" mnemonicParsing="false" onAction="#backToMain" prefWidth="327.0" text="Main" GridPane.columnIndex="3" GridPane.rowIndex="2">
+         <font>
+            <Font name="Book_Akhanake" size="32.0" />
+         </font>
+      </Button>
    </children>
 </GridPane>

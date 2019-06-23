@@ -37,11 +37,12 @@ public class Scan2Controller implements Initializable {
     @FXML
     private ImageView currentFrame;
 
-
+    private ArrayList<String> order;
     ObservableList<OrderTable> data;
     String[] arrOrdered;
     String fileName;
     Image img;
+    boolean addFlag = false;
 
     private void loaddataFromScan1() {
         FXMLLoader loader = new FXMLLoader();
@@ -97,8 +98,6 @@ public class Scan2Controller implements Initializable {
 
     @FXML
     public void ok(ActionEvent e) throws IOException {
-        // Write to rdf file
-        // Find file name
         FXMLLoader loader = new FXMLLoader();
         Scan1Controller scan1Controller = loader.getController();
         String url = scan1Controller.url;
@@ -110,6 +109,27 @@ public class Scan2Controller implements Initializable {
         String pathName = "out/now/" + fileName;
         String predicate = "http://cafeone.com#";
         String fullURL = "http://cafeone.com/" + tableNO + "/" + time;
+
+        // Send Email
+        SendEmail("smtp.gmail.com", 587, "cafeone.official@gmail.com", "Cafeone2019", "cafeone.kitchen@gmail.com" );
+        System.out.println("------------- Email send ----------------");
+
+
+        // Write to rdf file
+        if (addFlag) {
+            // Find file exist
+            String existFile = null;
+            for (int j = 0; j<order.size(); j++) {
+                String tbNO = order.get(j).substring(1, 3);
+                if (tbNO.equals(tableNO)) {
+                    existFile = order.get(j);
+                    Rdf rdfRead = new Rdf();
+                    ArrayList<String> order = rdfRead.listMenuStatus(existFile);
+                    System.out.println("ORDER : " + order.get(0));
+                    break;
+                }
+            }
+        }
 
         // contain to RDF file
         // Object mean
@@ -125,8 +145,6 @@ public class Scan2Controller implements Initializable {
         table_no.writeRDF(pathName);
         System.out.println("------------- Write RDF file ----------------");
 
-        SendEmail("smtp.gmail.com", 587, "cafeone.official@gmail.com", "Cafeone2019", "cafeone.kitchen@gmail.com" );
-        System.out.println("------------- Email send ----------------");
 
         // Go to main scene
         Parent mainSceneParent = FXMLLoader.load(getClass().getResource("main.fxml"));
@@ -172,6 +190,17 @@ public class Scan2Controller implements Initializable {
             Transport.send(message);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void listFilesForFolder(final File folder) {
+        order.clear();
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                listFilesForFolder(fileEntry);
+            } else {
+                order.add(fileEntry.getName());
+            }
         }
     }
 

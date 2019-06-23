@@ -12,21 +12,21 @@ import java.util.ArrayList;
 public class Rdf {
     private Model model;
 //
-    public static void main(String[] args) throws IOException {
-       Rdf r = new Rdf();
-       String pathDIR = "D:\\Project\\marvenEX\\prj01\\src\\main\\java\\tu\\myorg\\";
-       String pathFile = pathDIR + "test.ttl";
-        pathFile = "D:\\newProject\\out\\now\\T15_20190611103433.ttl";
-//        ArrayList<String[]> arrListOrdered = r.listMenuStatus(pathFile);
-        if (r.changeStatusToPaid(pathFile)) {
-            System.out.println("changeStatusToPaid success.");
-        } else {
-            System.out.println("changeStatusToPaid failed");
-        }
-//        System.out.println();
-//        System.out.println("After change to paid");
-//        r.listMenuStatus(pathFile);
-    }
+//    public static void main(String[] args) throws IOException {
+//       Rdf r = new Rdf();
+//       String pathDIR = "D:\\Project\\marvenEX\\prj01\\src\\main\\java\\tu\\myorg\\";
+//       String pathFile = pathDIR + "test.ttl";
+//        pathFile = "D:\\newProject\\out\\now\\T15_20190611103433.ttl";
+////        ArrayList<String[]> arrListOrdered = r.listMenuStatus(pathFile);
+//        if (r.changeStatusToPaid(pathFile)) {
+//            System.out.println("changeStatusToPaid success.");
+//        } else {
+//            System.out.println("changeStatusToPaid failed");
+//        }
+////        System.out.println();
+////        System.out.println("After change to paid");
+////        r.listMenuStatus(pathFile);
+//    }
 
      public boolean changeStatusTopaid(String file) throws IOException {
          model = readModel(file);
@@ -79,8 +79,10 @@ public class Rdf {
             Statement newStmt;
             if (individualMenu.equals(menu)) {
                 newStmt = newModel.createStatement(subject, predicate, "Served");
+                System.out.println("Change to SERVED");
             } else {
                 newStmt = newModel.createStatement(subject, predicate, object);
+                System.out.println("NOT Change to SERVED");
             }
             newModel.add(newStmt);
         }

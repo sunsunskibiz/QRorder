@@ -201,7 +201,7 @@ public class Scan1Controller {
                                         int value = (int) check[0];
                                         // count NO. black pixel
 //                                        System.out.println("value[" + row + "," + col + "] = " + value);
-                                        if (value < 100) {
+                                        if (value < 150) {
                                             black++;
                                         }
                                     }
@@ -213,7 +213,7 @@ public class Scan1Controller {
                                 float percentBlack = (float) black / (float) allPixels * 100;
 //                                System.out.println(j + "_Percent of Black pixel => " + percentBlack);
 
-                                if (percentBlack > 15) {
+                                if (percentBlack > 10) {
                                     String itOrder = "MenuOrdered => " + arrMenu[11 - j][1] + ", " + arrMenu[11 - j][0];
                                     System.out.println(itOrder);
                                     arrLineOrderedMenu.add(arrMenu[11 - j][0]);
