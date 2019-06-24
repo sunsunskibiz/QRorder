@@ -81,7 +81,7 @@
           <artifactId>mail</artifactId>
           <version>1.5.0-b01</version>
       </dependency>
-      <!--    <dependency>-->
+<!--      <dependency>-->
 <!--        <groupId>org.openpnp</groupId>-->
 <!--        <artifactId>openpnp-capture-java</artifactId>-->
 <!--        <version>0.0.17</version>-->
