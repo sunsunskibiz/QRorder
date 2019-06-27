@@ -7,6 +7,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -22,6 +23,10 @@ import java.nio.file.*;
 public class CheckController implements Initializable {
     @FXML
     private TableView<CheckTable> myTable;
+    @FXML
+    private Label tableNO;
+
+    private String no;
     private String[] orderArr;
     private String[][] arrMenu = HelloFX.arrMenu;
     private String destPath = "D:\\newProject\\out\\now\\";
@@ -41,7 +46,9 @@ public class CheckController implements Initializable {
         price.setCellValueFactory(new PropertyValueFactory<CheckTable,String>("price"));
         status.setCellValueFactory(new PropertyValueFactory<CheckTable,String>("status"));
 
+
         loaddataFromMain();
+        tableNO.setText(no);
         fillPrepareTable();
     }
 
@@ -50,6 +57,7 @@ public class CheckController implements Initializable {
         MainController mainController = loader.getController();
         destPath = destPath + mainController.destpath;
         newPath = newPath + mainController.destpath;
+        no = mainController.destpath.substring(1,3);
     }
 
     void fillPrepareTable() {

@@ -39,7 +39,7 @@ public class TestOpencvController implements Initializable {
         try {
             testDetect();
 
-            FileInputStream inputstream = new FileInputStream("out/testQR22.jpg");
+            FileInputStream inputstream = new FileInputStream("out/testQR33.jpg");
             Image image = new Image(inputstream);
             leftFrame.setImage(image);
 
@@ -52,25 +52,14 @@ public class TestOpencvController implements Initializable {
     }
 
     public void testDetect() throws IOException {
-//        Mat img = imread("test.jpg"), gray;
         File fJpg = new File("out/cvt.jpg");
 
         Imgcodecs imageCodecs = new Imgcodecs();
-        Mat in = imageCodecs.imread("out/testQR22.jpg");
-//        Mat cyOutput = new Mat();
-//        BufferedImage bOut = mat2Img(in);
-//        ImageIO.write(bOut, "jpg", fJpg);
-//
-//        List<MatOfPoint> contours = new ArrayList<>();
-//        Mat hierarchy = new Mat();
+        Mat in = imageCodecs.imread("out/testQR33.jpg");
         Mat gray = new Mat();
 
         Imgproc.cvtColor(in, gray, Imgproc.COLOR_RGB2GRAY);
         Mat bwim = new Mat();
-//        Imgproc.threshold(gray, bwim, 100, 255, Imgproc.THRESH_BINARY);
-//        bwim = gray;
-//        BufferedImage bb = mat2Img(in);
-//        ImageIO.write(bb, "jpg", fJpg);
 
         Mat cannyOutput = new Mat();
         Imgproc.Canny(gray, cannyOutput, 100, 100 * 2);
@@ -86,7 +75,7 @@ public class TestOpencvController implements Initializable {
                 Imgproc.drawContours(drawing, contours, i, color, 2, Core.LINE_8, hierarchy, 0, new Point());
             }
         }
-//        BufferedImage bb = mat2Img(drawing);
+//        BufferedImage bb = mat2Img(cannyOutput);
         BufferedImage bb = mat2Img(drawing);
         ImageIO.write(bb, "jpg", fJpg);
 
