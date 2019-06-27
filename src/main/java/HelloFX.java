@@ -160,6 +160,20 @@ public class HelloFX extends Application {
                             pdfAddText(cb, x1+50, y1-16 + 80 + 2, arrMenu[r][0], 14);
                         }
                     }
+                    // Marker
+                    for(int r=0; r<=15; r++) {
+                        int x1 = ox + i * wd + 1;
+                        int y1 = oy + j * hg + r * lsp + lsp - yf;
+                        if (r >= 3) {
+                            if (r == 3 || r == 15) {
+                                pdfLine(cb, x1, y1, x1 + wd, y1);
+                            }
+                            if (r >= 15) break;
+                            cb.rectangle(x1 + 40, y1 - 10 + 12, 7.5, 15);
+                            cb.fill();
+                        }
+                    }
+
                     pdfAddText(cb, x+10, y - 315, "Note.", 18);
 
                     pdfAddText(cb, x+80, y-2-yf+9+3, "CafeOne", 32);
