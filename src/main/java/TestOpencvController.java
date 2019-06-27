@@ -31,7 +31,7 @@ public class TestOpencvController implements Initializable {
     @FXML
     private ImageView rightFrame;
 
-    private String inpath = "out/testQR442.jpg";
+    private String inpath = "out/testQRR20.jpg";
     private String outpath = "out/cvt.jpg";
 
 
@@ -76,21 +76,23 @@ public class TestOpencvController implements Initializable {
         for (int i = 0; i < contours.size(); i++) {
             Rect rect = boundingRect(contours.get(i));
             double k = (rect.height+0.0)/rect.width;
-            if (0.8<k && k<1.2 && rect.area()>200) {
-                Scalar color = new Scalar(0, 0, 255);
+            Scalar color = new Scalar(0, 0, 255);
+//            Imgproc.drawContours(in, contours, i, color, 1, Core.LINE_8, hierarchy, 0, new Point());
+
+            if (1.5<k && k<2.5 && rect.area()>100) {
 //                Scalar color = new Scalar(rng.nextInt(256), rng.nextInt(256), rng.nextInt(256));
-                Imgproc.drawContours(in, contours, i, color, 2, Core.LINE_8, hierarchy, 0, new Point());
-                int startX = rect.x + 20;
+                Imgproc.drawContours(in, contours, i, color, 1, Core.LINE_8, hierarchy, 0, new Point());
+                int startX = rect.x - 20;
                 int startY = rect.y;
                 boolean checkDuplicateStartX = (startX == oldStartX);
                 boolean checkDuplicateStartY = (startY == oldStartY);
 
-                if (startY > 120 && !checkDuplicateStartX && !checkDuplicateStartY ) {
+//                if (startY > 120 && !checkDuplicateStartX && !checkDuplicateStartY ) {
                     System.out.println(count++ + ": " + rect.x + "," + rect.y);
-                    Imgproc.rectangle (in, new Point(startX, startY), new Point(startX + rect.height, startY + rect.width), new Scalar(0, 255, 0),1);
+                    Imgproc.rectangle (in, new Point(startX, startY), new Point(startX + (rect.width * 2), startY + rect.height), new Scalar(0, 255, 0),1);
                     oldStartX = startX;
                     oldStartY = startY;
-                }
+//                }
             }
         }
         BufferedImage bb = mat2Img(in);

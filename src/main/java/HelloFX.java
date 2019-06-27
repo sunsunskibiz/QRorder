@@ -240,10 +240,10 @@ public class HelloFX extends Application {
 //        rdfRead.listMenuStatus(destPath);
 //        System.out.println("Read finished");
 
-        System.out.println("======================= Create QRorder ============================");
-        HelloFX helloFXNOTE = new HelloFX();
-        helloFXNOTE.createQRorder();
-        System.out.println("Create QRorder finished");
+//        System.out.println("======================= Create QRorder ============================");
+//        HelloFX helloFXNOTE = new HelloFX();
+//        helloFXNOTE.createQRorder();
+//        System.out.println("Create QRorder finished");
 
         launch();
     }
