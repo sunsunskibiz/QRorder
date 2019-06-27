@@ -81,7 +81,7 @@ public class HelloFX extends Application {
     }
 
     @SuppressWarnings({"unchecked","deprecation"})
-    public void createQRnote() throws Exception {
+    public void createQRorder() throws Exception {
         if(bf==null) bf = BaseFont.createFont("thaifont.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
         int p = 0;
         Document doc = new Document(PageSize.A4, 0, 0, 0, 0);
@@ -122,7 +122,13 @@ public class HelloFX extends Application {
                     int yf = 5;
 
                     String qrid = "cafeone";
-                    String pgnos = "T"+(aPageNo[pn]-1);
+                    int tableNO = aPageNo[pn]-1;
+                    String pgnos;
+                    if (tableNO < 10) {
+                        pgnos = "T0"+ tableNO;
+                    } else {
+                        pgnos = "T"+ tableNO;
+                    }
                     com.itextpdf.text.Image image = makeQrImage(qrid + pgnos);
                     cb.addImage(image, 80, 0, 0, 80, x, y-60);
                     int pgno = aPageNo[pn];
@@ -234,10 +240,10 @@ public class HelloFX extends Application {
 //        rdfRead.listMenuStatus(destPath);
 //        System.out.println("Read finished");
 
-//        System.out.println("======================= Create QRnote ============================");
-//        HelloFX helloFXNOTE = new HelloFX();
-//        helloFXNOTE.createQRnote();
-//        System.out.println("Create QRnote finished");
+        System.out.println("======================= Create QRorder ============================");
+        HelloFX helloFXNOTE = new HelloFX();
+        helloFXNOTE.createQRorder();
+        System.out.println("Create QRorder finished");
 
         launch();
     }
