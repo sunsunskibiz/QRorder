@@ -31,7 +31,8 @@ public class TestOpencvController implements Initializable {
     @FXML
     private ImageView rightFrame;
 
-    private Random rng = new Random(12345);
+    private String inpath = "out/testQR442.jpg";
+    private String outpath = "out/cvt.jpg";
 
 
     @Override
@@ -39,11 +40,11 @@ public class TestOpencvController implements Initializable {
         try {
             testDetect();
 
-            FileInputStream inputstream = new FileInputStream("out/testQR33.jpg");
+            FileInputStream inputstream = new FileInputStream(inpath);
             Image image = new Image(inputstream);
             leftFrame.setImage(image);
 
-            FileInputStream inputstream2 = new FileInputStream("out/cvt.jpg");
+            FileInputStream inputstream2 = new FileInputStream(outpath);
             Image image2 = new Image(inputstream2);
             rightFrame.setImage(image2);
 
@@ -52,31 +53,51 @@ public class TestOpencvController implements Initializable {
     }
 
     public void testDetect() throws IOException {
-        File fJpg = new File("out/cvt.jpg");
+        File fJpg = new File(outpath);
 
         Imgcodecs imageCodecs = new Imgcodecs();
-        Mat in = imageCodecs.imread("out/testQR33.jpg");
+        Mat in = imageCodecs.imread(inpath);
         Mat gray = new Mat();
 
         Imgproc.cvtColor(in, gray, Imgproc.COLOR_RGB2GRAY);
-        Mat bwim = new Mat();
+//        Mat filter = new Mat();
+//        Imgproc.bilateralFilter(gray, filter, 9, 75, 75);
+//        Mat bw = new Mat();
+//        Imgproc.adaptiveThreshold(gray, bw, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 115, 4);
 
         Mat cannyOutput = new Mat();
         Imgproc.Canny(gray, cannyOutput, 100, 100 * 2);
         List<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
         Imgproc.findContours(cannyOutput, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-        Mat drawing = Mat.zeros(cannyOutput.size(), CvType.CV_8UC3);
+        int count = 1;
+        int oldStartX = 0;
+        int oldStartY = 0;
         for (int i = 0; i < contours.size(); i++) {
             Rect rect = boundingRect(contours.get(i));
             double k = (rect.height+0.0)/rect.width;
-            if (0.9<k && k<1.1 && rect.area()>150) {
-                Scalar color = new Scalar(rng.nextInt(256), rng.nextInt(256), rng.nextInt(256));
-                Imgproc.drawContours(drawing, contours, i, color, 2, Core.LINE_8, hierarchy, 0, new Point());
+            if (0.8<k && k<1.2 && rect.area()>200) {
+                Scalar color = new Scalar(0, 0, 255);
+//                Scalar color = new Scalar(rng.nextInt(256), rng.nextInt(256), rng.nextInt(256));
+                Imgproc.drawContours(in, contours, i, color, 2, Core.LINE_8, hierarchy, 0, new Point());
+                int startX = rect.x + 20;
+                int startY = rect.y;
+                boolean checkDuplicateStartX = (startX == oldStartX);
+                boolean checkDuplicateStartY = (startY == oldStartY);
+
+                if (startY > 120 && !checkDuplicateStartX && !checkDuplicateStartY ) {
+                    System.out.println(count++ + ": " + rect.x + "," + rect.y);
+                    Imgproc.rectangle (in, new Point(startX, startY), new Point(startX + rect.height, startY + rect.width), new Scalar(0, 255, 0),1);
+                    oldStartX = startX;
+                    oldStartY = startY;
+                }
             }
         }
+        BufferedImage bb = mat2Img(in);
+//        BufferedImage bb = mat2Img(drawing);
 //        BufferedImage bb = mat2Img(cannyOutput);
-        BufferedImage bb = mat2Img(drawing);
+//        BufferedImage bb = mat2Img(filter);
+//        BufferedImage bb = mat2Img(bw);
         ImageIO.write(bb, "jpg", fJpg);
 
 //        Imgproc.findContours(bwim, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
