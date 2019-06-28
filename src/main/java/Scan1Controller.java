@@ -10,16 +10,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Rect;
-import org.opencv.core.Point;
-import org.opencv.core.Size;
+import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
 
@@ -29,10 +23,35 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.WritableRaster;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.time.temporal.ValueRange;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.opencv.core.*;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+import org.opencv.videoio.VideoCapture;
+
+import javax.imageio.ImageIO;
+
+import static org.opencv.imgproc.Imgproc.boundingRect;
 
 public class Scan1Controller {
     @FXML
@@ -42,6 +61,18 @@ public class Scan1Controller {
     private VideoCapture capture;
     static String[] dataToScene2;
     static String url;
+
+    private  int countGreenBox = 0;
+    private String outpath = "out/cvt.jpg";
+    private String outpathBW = "out/bw.jpg";
+    private String graypath = "out/gray.jpg";
+    private int theadholdstartY = 100;
+    private int theadholdRectArea = 100;
+    private int diffY = 30;
+    private int rangeDuplicateX = 5;
+    private int rangeDuplicateY = 5;
+    private int rangeY = 7;
+    BufferedImage[] aMk = new BufferedImage[12];
 
     final static String[][] arrMenu = HelloFX.arrMenu;
     public void initialize() {
@@ -111,9 +142,11 @@ public class Scan1Controller {
                     Result qr = new MultiFormatReader().decode(binaryBitmap);
                     if (qr != null) {
                         url = qr.getText();
-                        System.out.println("Scand QRorder from " + url);
-                        stopAcquisition();
-
+                        System.out.println("<++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++>");
+                        System.out.println("Scan QRorder from " + url);
+//                        if (countGreenBox == 12) {
+//                            stopAcquisition();
+//                        }
                         aResPnt = qr.getResultPoints();
                         qrRct = null;
                         if(aResPnt.length>=3) {
@@ -175,62 +208,173 @@ public class Scan1Controller {
                             Mat bwim = new Mat();
                             Imgproc.threshold(gray, bwim, 127, 255, Imgproc.THRESH_BINARY);
                             bwim = gray;
-
-                            //img2 = mat2Img(destImage);
-                            //img2 = mat2Img(gray);
                             img2 = mat2Img(bwim);
+                            File fJpg = new File("out/002.jpg");
+                            ImageIO.write(img2, "jpg", fJpg);
 
+                            Imgcodecs imageCodecs = new Imgcodecs();
+                            Mat in = imageCodecs.imread("out/002.jpg");
+                            Mat bwim2 = new Mat();
+                            Mat gray2 = in;
                             ArrayList<String> arrLineOrderedMenu = new ArrayList<String>();
                             String message = "";
                             int total = 0;
-                            double x0 = 20, y0 = 110, ysp = 27;
-                            int mkwd = 40, mkhg = 40;
-                            for (int j = 0; j < 12; j++) {
-                                roi = new Rect((int) x0, (int) (y0 + ysp * (double) j), mkwd, mkhg);
-                                mk = new Mat(bwim, roi);
-                                // Detace order
-                                int allPixels = mk.rows() * mk.cols();
-//                                System.out.println("NO. all pixels => " + allPixels);
 
-                                // Valid
-                                // Get value pixel
-                                int black = 0;
-                                for (int row = 0; row < mk.rows(); row++) {
-                                    for (int col = 0; col < mk.cols(); col++) {
-                                        double[] check = mk.get(row, col);
-                                        int value = (int) check[0];
-                                        // count NO. black pixel
-//                                        System.out.println("value[" + row + "," + col + "] = " + value);
-                                        if (value < 150) {
-                                            black++;
+//                            Imgproc.cvtColor(in, gray2, Imgproc.COLOR_RGB2GRAY);
+                            Imgproc.threshold(gray2, bwim2, 127, 255, Imgproc.THRESH_BINARY);
+                            BufferedImage aa = mat2Img(gray2);
+                            ImageIO.write(aa, "jpg", new File(graypath));
+//
+                            Mat cannyOutput = new Mat();
+                            Imgproc.Canny(gray2, cannyOutput, 100, 100 * 2);
+                            List<MatOfPoint> contours = new ArrayList<>();
+                            Mat hierarchy = new Mat();
+                            Imgproc.findContours(cannyOutput, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
+                            int count = 1;
+                            int oldStartX = 0;
+                            int oldStartY = 0;
+                            int nextRangeY = 0;
+                            boolean startinLoop = false;
+
+                            for (int i = 0; i < contours.size(); i++) {
+                                Rect rect = boundingRect(contours.get(i));
+                                double k = (rect.height+0.0)/rect.width;
+                                Scalar color = new Scalar(0, 0, 255);
+
+                                if (1.5<k && k<2.5 && rect.area()>theadholdRectArea) {
+                                    Imgproc.drawContours(in, contours, i, color, 1, Core.LINE_8, hierarchy, 0, new Point());
+                                    int startX = rect.x + 20;
+                                    int startY = rect.y;
+                                    boolean checkDuplicateStartX;
+                                    boolean checkInRangeY;
+                                    if (startinLoop) {
+                                        checkDuplicateStartX = (ValueRange.of(oldStartX-rangeDuplicateX, oldStartX+rangeDuplicateX).isValidIntValue(startX));
+                                        checkInRangeY = (ValueRange.of(nextRangeY-rangeY, nextRangeY+rangeY).isValidIntValue(startY));
+                                    } else {
+                                        checkDuplicateStartX = true;
+                                        checkInRangeY = true;
+                                    }
+
+                                    boolean checkDuplicateStartY = (ValueRange.of(oldStartY-rangeDuplicateY, oldStartY+rangeDuplicateY).isValidIntValue(startY));
+                                    if (startY > theadholdstartY && !checkDuplicateStartY && checkDuplicateStartX && checkInRangeY) {
+//                                        System.out.println(count + ": " + rect.x + "," + rect.y);
+                                        Imgproc.rectangle (in, new Point(startX, startY), new Point(startX + (rect.width * 2), startY + rect.height), new Scalar(0, 255, 0),1);
+                                        countGreenBox++;
+                                        if ((oldStartY - startY) < 0) {
+                                            nextRangeY = startY - diffY;
+                                        } else {
+                                            nextRangeY = startY - (oldStartY - startY);
                                         }
+                                        oldStartY = startY;
+                                        oldStartX = startX;
+                                        startinLoop = true;
+
+                                        // Crop minibox
+                                        Rect rectCrop = new Rect(new Point(startX, startY), new Point(startX+ (rect.width * 2), startY+ rect.height));
+                                        Mat imageCrop = bwim2.submat(rectCrop);
+
+                                        // Detect order
+                                        int allPixels = imageCrop.rows() * imageCrop.cols();
+//                                        System.out.println("NO. all pixels => " + allPixels);
+
+                                        // Valid
+                                        // Get value pixel
+                                        int black = 0;
+                                        for (int row = 0; row < imageCrop.rows(); row++) {
+                                            for (int col = 0; col < imageCrop.cols(); col++) {
+                                                double[] check = imageCrop.get(row, col);
+                                                int value = (int) check[0];
+                                                // count NO. black pixel
+//                                        System.out.println("value[" + row + "," + col + "] = " + value);
+                                                if (value < 127) {
+                                                    black++;
+                                                }
+                                            }
+                                        }
+//                                        System.out.println("NO. black pixels => " + black);
+
+
+                                        // Order that menu or Not (There are black pixels more than 30% of all pixels of Image)
+                                        float percentBlack = (float) black / (float) allPixels * 100;
+//                                        System.out.println(count + "_Percent of Black pixel => " + percentBlack);
+//
+                                        if (percentBlack > 25) {
+                                            String itOrder = "MenuOrdered => " + arrMenu[count-1][1] + ", " + arrMenu[count-1][0];
+                                            System.out.println(itOrder);
+                                            arrLineOrderedMenu.add(arrMenu[count-1][0]);
+                                            message += itOrder + "\n";
+                                            total += Integer.parseInt(arrMenu[count-1][1]);
+                                        }
+                                        // Print mini box
+                                        aMk[count-1] = mat2Img(imageCrop);
+                                        String pathname = "out/minibox2/minibox_" + count;
+                                        File miniboxPath = new File(pathname + ".jpg");
+                                        ImageIO.write(aMk[count-1], "jpg", miniboxPath);
+
+                                        count++;
+
                                     }
                                 }
-//                                System.out.println("NO. black pixels => " + black);
-
-
-                                // Order that menu or Not (There are black pixels more than 10% of all pixels of Image)
-                                float percentBlack = (float) black / (float) allPixels * 100;
-//                                System.out.println(j + "_Percent of Black pixel => " + percentBlack);
-
-                                if (percentBlack > 10) {
-                                    String itOrder = "MenuOrdered => " + arrMenu[11 - j][1] + ", " + arrMenu[11 - j][0];
-                                    System.out.println(itOrder);
-                                    arrLineOrderedMenu.add(arrMenu[11 - j][0]);
-                                    message += itOrder + "\n";
-                                    total += Integer.parseInt(arrMenu[11 - j][1]);
-                                }
-
-                                // Print mini box
-                                aMk[j] = mat2Img(mk);
-                                String pathname = "out/minibox/minibox_" + j;
-                                File fJpg = new File(pathname + ".jpg");
-                                ImageIO.write(aMk[j], "jpg", fJpg);
-
                             }
+                            if (countGreenBox == 12) {
+                                stopAcquisition();
+                            }
+                            countGreenBox = 0;
+                            Collections.reverse(arrLineOrderedMenu);
                             dataToScene2 = arrLineOrderedMenu.toArray(new String[arrLineOrderedMenu.size()]);
-                            File fJpg = new File("out/002.jpg");
-                            ImageIO.write(img2, "jpg", fJpg);
+                            BufferedImage bb = mat2Img(in);
+                            ImageIO.write(bb, "jpg", new File(outpath));
+                            BufferedImage bw = mat2Img(bwim2);
+                            ImageIO.write(bw, "jpg", new File(outpathBW));
+
+//                            double x0 = 20, y0 = 110, ysp = 27;
+//                            int mkwd = 40, mkhg = 40;
+//                            for (int j = 0; j < 12; j++) {
+//                                roi = new Rect((int) x0, (int) (y0 + ysp * (double) j), mkwd, mkhg);
+//                                mk = new Mat(bwim, roi);
+//                                // Detace order
+//                                int allPixels = mk.rows() * mk.cols();
+////                                System.out.println("NO. all pixels => " + allPixels);
+//
+//                                // Valid
+//                                // Get value pixel
+//                                int black = 0;
+//                                for (int row = 0; row < mk.rows(); row++) {
+//                                    for (int col = 0; col < mk.cols(); col++) {
+//                                        double[] check = mk.get(row, col);
+//                                        int value = (int) check[0];
+//                                        // count NO. black pixel
+////                                        System.out.println("value[" + row + "," + col + "] = " + value);
+//                                        if (value < 150) {
+//                                            black++;
+//                                        }
+//                                    }
+//                                }
+////                                System.out.println("NO. black pixels => " + black);
+//
+//
+//                                // Order that menu or Not (There are black pixels more than 10% of all pixels of Image)
+//                                float percentBlack = (float) black / (float) allPixels * 100;
+////                                System.out.println(j + "_Percent of Black pixel => " + percentBlack);
+//
+//                                if (percentBlack > 10) {
+//                                    String itOrder = "MenuOrdered => " + arrMenu[11 - j][1] + ", " + arrMenu[11 - j][0];
+//                                    System.out.println(itOrder);
+//                                    arrLineOrderedMenu.add(arrMenu[11 - j][0]);
+//                                    message += itOrder + "\n";
+//                                    total += Integer.parseInt(arrMenu[11 - j][1]);
+//                                }
+//
+//                                // Print mini box
+//                                aMk[j] = mat2Img(mk);
+//                                String pathname = "out/minibox/minibox_" + j;
+//                                File fJpg = new File(pathname + ".jpg");
+//                                ImageIO.write(aMk[j], "jpg", fJpg);
+//
+//                            }
+//                            dataToScene2 = arrLineOrderedMenu.toArray(new String[arrLineOrderedMenu.size()]);
+//                            File fJpg = new File("out/002.jpg");
+//                            ImageIO.write(img2, "jpg", fJpg);
 //                                String txt = ""+qr+"\n" + message + "\n Total price : " + total;
                         }
                     }
