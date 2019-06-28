@@ -32,7 +32,7 @@ public class TestOpencvController implements Initializable {
     @FXML
     private ImageView rightFrame;
 
-    private String inpath = "out/022.jpg";
+    private String inpath = "out/106.jpg";
 //    private String inpath = "out/testQRRR20.jpg";
     private String outpath = "out/cvt.jpg";
     private String graypath = "out/gray.jpg";

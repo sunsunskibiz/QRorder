@@ -147,7 +147,7 @@ public class HelloFX extends Application {
                     cb.setLineWidth(0.05f);
                     // BOX
                     for(int r=0; r<=15; r++) {
-                        int x1 = ox + i * wd + 1;
+                        int x1 = ox + i * wd + 11;
                         int y1 = oy + j * hg + r * lsp + lsp - yf;
                         if(r>=3) {
                             if (r == 3 || r ==15) {
@@ -168,7 +168,7 @@ public class HelloFX extends Application {
                     }
                     // Marker
                     for(int r=0; r<=15; r++) {
-                        int x1 = ox + i * wd + 1;
+                        int x1 = ox + i * wd + 11;
                         int y1 = oy + j * hg + r * lsp + lsp - yf;
                         if (r >= 3) {
                             if (r == 3 || r == 15) {
