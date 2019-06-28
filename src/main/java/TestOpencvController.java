@@ -32,7 +32,7 @@ public class TestOpencvController implements Initializable {
     @FXML
     private ImageView rightFrame;
 
-    private String inpath = "out/106.jpg";
+    private String inpath = "out/1061.jpg";
 //    private String inpath = "out/testQRRR20.jpg";
     private String outpath = "out/cvt.jpg";
     private String graypath = "out/gray.jpg";
@@ -42,6 +42,9 @@ public class TestOpencvController implements Initializable {
     private int rangeDuplicateX = 5;
     private int rangeDuplicateY = 5;
     private int rangeY = 7;
+    BufferedImage[] aMk = new BufferedImage[12];
+//    int mkwd = 40, mkhg = 40;
+
 
 
 
@@ -76,7 +79,7 @@ public class TestOpencvController implements Initializable {
 //        Mat filter = new Mat();
 //        Imgproc.bilateralFilter(gray, filter, 9, 75, 75);
 //        Mat bw = new Mat();
-//        Imgproc.threshold(gray, bwim, 127, 255, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(gray, bwim, 127, 255, Imgproc.THRESH_BINARY);
         BufferedImage aa = mat2Img(gray);
         ImageIO.write(aa, "jpg", new File(graypath));
 
@@ -120,8 +123,7 @@ public class TestOpencvController implements Initializable {
 //                System.out.println("checkDuplicateStartX : " + checkDuplicateStartX);
 //                System.out.println("checkInRangeY : " + checkInRangeY);
                 if (startY > theadholdstartY && !checkDuplicateStartY && checkDuplicateStartX && checkInRangeY) {
-//                if (startY > theadholdstartY && !checkDuplicateStartY && checkDuplicateStartX) {
-                    System.out.println(count++ + ": " + rect.x + "," + rect.y);
+                    System.out.println(count + ": " + rect.x + "," + rect.y);
                     Imgproc.rectangle (in, new Point(startX, startY), new Point(startX + (rect.width * 2), startY + rect.height), new Scalar(0, 255, 0),1);
 //                    System.out.println("Diff y : " + (oldStartY - startY));
                     if ((oldStartY - startY) < 0) {
@@ -129,15 +131,64 @@ public class TestOpencvController implements Initializable {
                     } else {
                         nextRangeY = startY - (oldStartY - startY);
                     }
-                    System.out.println("Next y : " + nextRangeY);
+//                    System.out.println("Next y : " + nextRangeY);
                     oldStartY = startY;
                     oldStartX = startX;
                     startinLoop = true;
+
+                    // Crop minibox
+                    Rect rectCrop = new Rect(new Point(startX, startY), new Point(startX+ (rect.width * 2), startY+ rect.height));
+//                    Rect rectCrop = new Rect(startX, startY, startX + (rect.width * 2), startY + rect.height);
+//                    Mat mk = new Mat(bwim, roi);
+                    Mat imageCrop = bwim.submat(rectCrop);
+
+                    // Detace order
+                    int allPixels = imageCrop.rows() * imageCrop.cols();
+                    System.out.println("NO. all pixels => " + allPixels);
+
+                    // Valid
+                    // Get value pixel
+                    int black = 0;
+                    for (int row = 0; row < imageCrop.rows(); row++) {
+                        for (int col = 0; col < imageCrop.cols(); col++) {
+                            double[] check = imageCrop.get(row, col);
+                            int value = (int) check[0];
+                            // count NO. black pixel
+//                                        System.out.println("value[" + row + "," + col + "] = " + value);
+                            if (value < 127) {
+                                black++;
+                            }
+                        }
+                    }
+                    System.out.println("NO. black pixels => " + black);
+
+
+                    // Order that menu or Not (There are black pixels more than 10% of all pixels of Image)
+                    float percentBlack = (float) black / (float) allPixels * 100;
+                    System.out.println(count + "_Percent of Black pixel => " + percentBlack);
+//
+                    if (percentBlack > 30) {
+//                        String itOrder = "MenuOrdered => " + arrMenu[11 - j][1] + ", " + arrMenu[11 - j][0];
+//                        System.out.println(itOrder);
+//                        arrLineOrderedMenu.add(arrMenu[11 - j][0]);
+//                        message += itOrder + "\n";
+//                        total += Integer.parseInt(arrMenu[11 - j][1]);
+                        System.out.println("============Served===================");
+                    }
+                    // Print mini box
+                    aMk[count-1] = mat2Img(imageCrop);
+                    String pathname = "out/minibox2/minibox_" + count;
+                    File miniboxPath = new File(pathname + ".jpg");
+                    ImageIO.write(aMk[count-1], "jpg", miniboxPath);
+
+                    count++;
+
                 }
             }
         }
         BufferedImage bb = mat2Img(in);
 //        BufferedImage bb = mat2Img(drawing);
+//        BufferedImage bb = mat2Img(bwim);
 //        BufferedImage bb = mat2Img(cannyOutput);
 //        BufferedImage bb = mat2Img(filter);
 //        BufferedImage bb = mat2Img(bw);
