@@ -213,7 +213,7 @@ public class Rdf {
          return model;
      }
 
-     private boolean deleteRdfFile (String f) {
+     public boolean deleteRdfFile (String f) {
          File file = new File(f);
          return (file.delete());
      }
@@ -221,6 +221,25 @@ public class Rdf {
      public String helloRDF() {
          return "Hi from RDF";
      }
+
+    public void prepareAdd(String file, String subject) throws IOException {
+        model = readModel(file);
+        Model newModel = ModelFactory.createDefaultModel();
+
+        // list the statements in the graph
+        StmtIterator iter = model.listStatements();
+
+        model = newModel;
+        // print out the predicate, subject and object of each statement
+        while (iter.hasNext()) {
+            Statement stmt = iter.nextStatement(); // get next statement
+//            Resource subject = stmt.getSubject();   // get the subject
+            Property predicate = stmt.getPredicate(); // get the predicate
+            RDFNode object = stmt.getObject();
+
+            addStatement(subject, predicate.toString(), object.toString());
+        }
+    }
 
 }
 
