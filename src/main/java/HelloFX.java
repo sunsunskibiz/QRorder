@@ -175,7 +175,7 @@ public class HelloFX extends Application {
                                 pdfLine(cb, x1, y1, x1 + wd, y1);
                             }
                             if (r >= 15) break;
-                            cb.rectangle(x1 + 40, y1 - 10 + 12, 7.5, 15);
+                            cb.rectangle(x1 + 5, y1 - 10 + 12, 7.5, 15);
                             cb.fill();
                         }
                     }
@@ -224,6 +224,7 @@ public class HelloFX extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+//        Parent root = FXMLLoader.load(getClass().getResource("/main.fxml"));
         Parent root = FXMLLoader.load(getClass().getResource("/testOpencv.fxml"));
         stage.setTitle("QR Order");
         stage.setScene(new Scene(root, 800, 600));

@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -31,8 +32,17 @@ public class TestOpencvController implements Initializable {
     @FXML
     private ImageView rightFrame;
 
-    private String inpath = "out/testQRR20.jpg";
+    private String inpath = "out/022.jpg";
+//    private String inpath = "out/testQRRR20.jpg";
     private String outpath = "out/cvt.jpg";
+    private String graypath = "out/gray.jpg";
+    private int theadholdstartY = 100;
+    private int theadholdRectArea = 100;
+    private int diffY = 30;
+    private int rangeDuplicateX = 5;
+    private int rangeDuplicateY = 5;
+    private int rangeY = 7;
+
 
 
     @Override
@@ -40,7 +50,7 @@ public class TestOpencvController implements Initializable {
         try {
             testDetect();
 
-            FileInputStream inputstream = new FileInputStream(inpath);
+            FileInputStream inputstream = new FileInputStream(graypath);
             Image image = new Image(inputstream);
             leftFrame.setImage(image);
 
@@ -57,13 +67,19 @@ public class TestOpencvController implements Initializable {
 
         Imgcodecs imageCodecs = new Imgcodecs();
         Mat in = imageCodecs.imread(inpath);
+//        Mat gray = imageCodecs.imread(inpath,0);
+        Mat bwim = new Mat();
+
         Mat gray = new Mat();
 
         Imgproc.cvtColor(in, gray, Imgproc.COLOR_RGB2GRAY);
 //        Mat filter = new Mat();
 //        Imgproc.bilateralFilter(gray, filter, 9, 75, 75);
 //        Mat bw = new Mat();
-//        Imgproc.adaptiveThreshold(gray, bw, 255, Imgproc.ADAPTIVE_THRESH_GAUSSIAN_C, Imgproc.THRESH_BINARY, 115, 4);
+//        Imgproc.threshold(gray, bwim, 127, 255, Imgproc.THRESH_BINARY);
+        BufferedImage aa = mat2Img(gray);
+        ImageIO.write(aa, "jpg", new File(graypath));
+
 
         Mat cannyOutput = new Mat();
         Imgproc.Canny(gray, cannyOutput, 100, 100 * 2);
@@ -73,26 +89,51 @@ public class TestOpencvController implements Initializable {
         int count = 1;
         int oldStartX = 0;
         int oldStartY = 0;
+        int nextRangeY = 0;
+        boolean startinLoop = false;
+
         for (int i = 0; i < contours.size(); i++) {
             Rect rect = boundingRect(contours.get(i));
             double k = (rect.height+0.0)/rect.width;
             Scalar color = new Scalar(0, 0, 255);
 //            Imgproc.drawContours(in, contours, i, color, 1, Core.LINE_8, hierarchy, 0, new Point());
 
-            if (1.5<k && k<2.5 && rect.area()>100) {
+            if (1.5<k && k<2.5 && rect.area()>theadholdRectArea) {
 //                Scalar color = new Scalar(rng.nextInt(256), rng.nextInt(256), rng.nextInt(256));
                 Imgproc.drawContours(in, contours, i, color, 1, Core.LINE_8, hierarchy, 0, new Point());
-                int startX = rect.x - 20;
+                int startX = rect.x + 20;
                 int startY = rect.y;
-                boolean checkDuplicateStartX = (startX == oldStartX);
-                boolean checkDuplicateStartY = (startY == oldStartY);
+                boolean checkDuplicateStartX;
+                boolean checkInRangeY;
+                if (startinLoop) {
+                    checkDuplicateStartX = (ValueRange.of(oldStartX-rangeDuplicateX, oldStartX+rangeDuplicateX).isValidIntValue(startX));
+                    checkInRangeY = (ValueRange.of(nextRangeY-rangeY, nextRangeY+rangeY).isValidIntValue(startY));
+//                    System.out.println("nextRangeY : " + nextRangeY);
+//                    System.out.println("startY : " + startY);
+                } else {
+                    checkDuplicateStartX = true;
+                    checkInRangeY = true;
+                }
 
-//                if (startY > 120 && !checkDuplicateStartX && !checkDuplicateStartY ) {
+                boolean checkDuplicateStartY = (ValueRange.of(oldStartY-rangeDuplicateY, oldStartY+rangeDuplicateY).isValidIntValue(startY));
+//                System.out.println("!checkDuplicateStartY : " + !checkDuplicateStartY);
+//                System.out.println("checkDuplicateStartX : " + checkDuplicateStartX);
+//                System.out.println("checkInRangeY : " + checkInRangeY);
+                if (startY > theadholdstartY && !checkDuplicateStartY && checkDuplicateStartX && checkInRangeY) {
+//                if (startY > theadholdstartY && !checkDuplicateStartY && checkDuplicateStartX) {
                     System.out.println(count++ + ": " + rect.x + "," + rect.y);
                     Imgproc.rectangle (in, new Point(startX, startY), new Point(startX + (rect.width * 2), startY + rect.height), new Scalar(0, 255, 0),1);
-                    oldStartX = startX;
+//                    System.out.println("Diff y : " + (oldStartY - startY));
+                    if ((oldStartY - startY) < 0) {
+                        nextRangeY = startY - diffY;
+                    } else {
+                        nextRangeY = startY - (oldStartY - startY);
+                    }
+                    System.out.println("Next y : " + nextRangeY);
                     oldStartY = startY;
-//                }
+                    oldStartX = startX;
+                    startinLoop = true;
+                }
             }
         }
         BufferedImage bb = mat2Img(in);
@@ -102,42 +143,6 @@ public class TestOpencvController implements Initializable {
 //        BufferedImage bb = mat2Img(bw);
         ImageIO.write(bb, "jpg", fJpg);
 
-//        Imgproc.findContours(bwim, contours, hierarchy, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-//        Scalar color = new Scalar(0,0,255);
-//        System.out.println(contours.size());
-//        for (int i = 0; i < contours.size(); i++) {
-//            Rect rect = boundingRect(contours.get(i));
-//            double k = (rect.height+0.0)/rect.width;
-////            if (0.9<k && k<1.1 && rect.area()>100)
-////            {
-//                Imgproc.drawContours(in, contours, i, color, 2, Core.LINE_8, hierarchy, 0, new Point());
-////            }
-//        }
-//
-//        BufferedImage bb = mat2Img(in);
-//        ImageIO.write(bb, "jpg", fJpg);
-
-
-//        vectorann<Vec4i> hierarchy;
-//        vector<vector<Point2i> > contours;
-//        cvtColor(img, gray, CV_BGR2GRAY);
-//        threshold(gray, gray, 100, 255, THRESH_BINARY);
-//        bitwise_not(gray, gray);
-//
-//        findContours(gray, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-//
-//        for(size_t i=0; i<contours.size(); i++)
-//        {
-//            Rect rect = boundingRect(contours[i]);
-//            double k = (rect.height+0.0)/rect.width;
-//            if (0.9<k && k<1.1 && rect.area()>100)
-//            {
-//                drawContours(img, contours, i, Scalar(0,0,255));
-//            }
-//        }
-//
-//        imshow("result", img);
-//        waitKey();
     }
 
     BufferedImage mat2Img(Mat m) {
