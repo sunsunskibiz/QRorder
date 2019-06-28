@@ -124,7 +124,7 @@ public class KitchenController implements Initializable {
                 System.out.println("==========================Print individual messages=============================");
                 System.out.println("No# " + (i + 1));
                 System.out.println("Email Subejct: " + individualmsg.getSubject());
-                System.out.println("Sender: " + individualmsg.getFrom()[0]);
+//                System.out.println("Sender: " + individualmsg.getFrom()[0]);
 
                 String contentType = individualmsg.getContentType();
                 String messageContent = "";
@@ -144,10 +144,11 @@ public class KitchenController implements Initializable {
                 } else if (contentType.contains("image/jpeg")) {
                     System.out.println("--------> image/jpeg");
                 }
-                System.out.println("Content: " + messageContent);
+//                System.out.println("Content: " + messageContent);
 
                 // Add in ArrayList prepare
                 String tableNO = individualmsg.getSubject().substring(1, 3);
+//                System.out.println("tableNO : " + tableNO);
                 String[] arr = messageContent.split("\n");
                 for (String s : arr) {
                     System.out.println(s);
