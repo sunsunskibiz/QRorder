@@ -70,6 +70,7 @@ import java.util.ArrayList;
      }
 
     public boolean changeStatusToserved(String file, String menu) throws IOException {
+        boolean hasChange = false;
         model = readModel(file);
         Model newModel = ModelFactory.createDefaultModel();
 
@@ -85,8 +86,9 @@ import java.util.ArrayList;
 
             String individualMenu = predicate.toString().substring(19, predicate.toString().length()-2);
             Statement newStmt;
-            if (individualMenu.equals(menu)) {
+            if (individualMenu.equals(menu) && !object.toString().equals("Served") && !hasChange) {
                 newStmt = newModel.createStatement(subject, predicate, "Served");
+                hasChange = true;
                 System.out.println("Change to SERVED");
             } else {
                 newStmt = newModel.createStatement(subject, predicate, object);
@@ -265,7 +267,6 @@ import java.util.ArrayList;
         for (Enumeration i = moreMenu.keys(); i.hasMoreElements();)
         {
             Object tmp = i.nextElement();
-            System.out.println("Value in Dictionary : " + tmp + " : " + moreMenu.get(tmp));
         }
     }
 
