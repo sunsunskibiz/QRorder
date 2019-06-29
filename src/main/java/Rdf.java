@@ -1,3 +1,4 @@
+ import com.github.jsonldjava.utils.Obj;
  import org.apache.jena.rdf.model.*;
  import org.apache.jena.util.FileManager;
  import org.apache.log4j.varia.NullAppender;
@@ -14,29 +15,25 @@ import java.util.ArrayList;
 
  public class Rdf {
     private Model model;
-
+    private Dictionary moreMenu;
+//
 //    public static void main(String[] args) throws IOException {
 //       Rdf r = new Rdf();
 //       String pathDIR = "D:\\Project\\marvenEX\\prj01\\src\\main\\java\\tu\\myorg\\";
 //       String pathFile = pathDIR + "test.ttl";
-//        pathFile = "D:\\newProject\\out\\now\\T24_20190629102855.ttl";
-////        ArrayList<String[]> arrListOrdered = r.listMenuStatus(pathFile);
+//        pathFile = "D:\\newProject\\out\\now\\T24_20190629121435.ttl";
+//        String fullURL = "http://cafeone.com/";
+//        r.prepareAdd(pathFile, fullURL);
+//
+//////        ArrayList<String[]> arrListOrdered = r.listMenuStatus(pathFile);
 ////        if (r.changeStatusToPaid(pathFile)) {
 ////            System.out.println("changeStatusToPaid success.");
 ////        } else {
 ////            System.out.println("changeStatusToPaid failed");
 ////        }
-//        Dictionary d = r.listMenuStatus(pathFile);
-//        for (Enumeration i = d.keys(); i.hasMoreElements();)
-//        {
-//            Object tmp = i.nextElement();
-//            System.out.println("Value in Dictionary : " + tmp + " : " + d.get(tmp));
-//            d.put(tmp, Integer.parseInt(d.get(tmp).toString()) + 1);
-//            System.out.println("Change Value in Dictionary : " + tmp + " : " + d.get(tmp));
-//        }
-////        System.out.println();
-////        System.out.println("After change to paid");
-////        r.listMenuStatus(pathFile);
+//////        System.out.println();
+//////        System.out.println("After change to paid");
+//////        r.listMenuStatus(pathFile);
 //    }
 
      public boolean changeStatusTopaid(String file) throws IOException {
@@ -151,22 +148,30 @@ import java.util.ArrayList;
         }
     }
 
-     public Dictionary listMenuStatus(String file) {
+     public ArrayList<String> listMenuStatus(String file) {
          model = readModel(file);
-         Dictionary menuStatus = new Hashtable();
+         ArrayList<String> menuStatus = new ArrayList<String>();
          // list the statements in the graph
          StmtIterator iter = model.listStatements();
 
          // print out the predicate, subject and object of each statement
          while (iter.hasNext()) {
-             Statement stmt      = iter.nextStatement(); // get next statement
+             Statement stmt      = iter.nextStatement();         // get next statement
+             Resource  subject   = stmt.getSubject();   // get the subject
              Property  predicate = stmt.getPredicate(); // get the predicate
              RDFNode   object    = stmt.getObject();    // get the object
 
+             String s = subject.toString();
              String p = predicate.toString();
              String o = object.toString();
+//
+//             System.out.print(s);
+//             System.out.print(" " + p + " ");
 
-             String menuStatusEachOne = p.substring(19, p.length()-2);
+             String menuStatusEachOne;
+             // Menu name
+             menuStatusEachOne = p.substring(19);
+             // Status
              if (object instanceof Resource) {
 //                 System.out.print(o);
                  menuStatusEachOne = menuStatusEachOne + "|" + o;
@@ -175,31 +180,11 @@ import java.util.ArrayList;
 //                 System.out.print(" \"" + o + "\"");
                  menuStatusEachOne = menuStatusEachOne + "|" + "\"" + o + "\"";
              }
-             // Menu name
-             menuStatus.put(menuStatusEachOne, p.substring(p.length()-1)) ;
+//             System.out.println(" .");
+             menuStatus.add(menuStatusEachOne);
          }
          return menuStatus;
      }
-
-    public ArrayList<String> listNumber(String file) {
-        model = readModel(file);
-        ArrayList<String> listNumber = new ArrayList<String>();
-        // list the statements in the graph
-        StmtIterator iter = model.listStatements();
-
-        // print out the predicate, subject and object of each statement
-        while (iter.hasNext()) {
-            Statement stmt      = iter.nextStatement();         // get next statement
-            Property  predicate = stmt.getPredicate(); // get the predicate
-            String p = predicate.toString();
-
-            String listNumberEachOne;
-            listNumberEachOne = p.substring(p.length()-1);
-            System.out.println(listNumberEachOne);
-            listNumber.add(listNumberEachOne);
-        }
-        return listNumber;
-    }
 
      public void writeRDF(String pathFile) throws IOException {
          String fileName = pathFile + ".ttl";
@@ -246,6 +231,7 @@ import java.util.ArrayList;
      }
 
     public void prepareAdd(String file, String subject) throws IOException {
+        moreMenu = new Hashtable();
         model = readModel(file);
         Model newModel = ModelFactory.createDefaultModel();
 
@@ -258,10 +244,46 @@ import java.util.ArrayList;
             Statement stmt = iter.nextStatement(); // get next statement
             Property predicate = stmt.getPredicate(); // get the predicate
             RDFNode object = stmt.getObject();
+            String p = predicate.toString();
+
+            // Add menu and number to Dicationary for find max number
+            String menu = p.substring(19, p.length()-2);
+            String amountEachMenu = p.substring(p.length()-1);
+            if (!moreMenu.isEmpty() && moreMenu.get(menu) != null) {
+                int inDic = Integer.parseInt(moreMenu.get(menu).toString());
+                int amt = Integer.parseInt(amountEachMenu);
+                if (inDic < amt) {
+                    moreMenu.remove(menu);
+                    moreMenu.put(menu, amountEachMenu);
+                }
+            } else {
+                moreMenu.put(menu, amountEachMenu);
+            }
 
             addStatement(subject, predicate.toString(), object.toString());
         }
+        for (Enumeration i = moreMenu.keys(); i.hasMoreElements();)
+        {
+            Object tmp = i.nextElement();
+            System.out.println("Value in Dictionary : " + tmp + " : " + moreMenu.get(tmp));
+        }
     }
+
+     public void addMoreStatement(String s, String p, String o) {
+         Resource subject = model.createResource(s);
+         Property predicate;
+        String menuName = p.substring(19);
+
+         if (moreMenu.get(menuName) != null) {
+            int  max = Integer.parseInt(moreMenu.get(menuName).toString());
+            predicate = model.createProperty(p + "," + (max+1));
+         } else {
+             predicate = model.createProperty(p + ",1");
+         }
+
+         Statement stmt = model.createStatement(subject, predicate, o);
+         model.add(stmt);
+     }
 
 }
 
