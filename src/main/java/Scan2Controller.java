@@ -37,12 +37,12 @@ public class Scan2Controller implements Initializable {
     @FXML
     private ImageView currentFrame;
 
-    private ArrayList<String> order;
+    private ArrayList<String> listFile;
     ObservableList<OrderTable> data;
+//    String[] arrOrdered = {"DARK_CHOCOLATE_PRAPPE", "FIGGY_PUDDING", "HONEY_TOAST"};
     String[] arrOrdered;
     String fileName;
     Image img;
-    boolean addFlag = false;
 
     private void loaddataFromScan1() {
         FXMLLoader loader = new FXMLLoader();
@@ -58,6 +58,7 @@ public class Scan2Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        listFile = new ArrayList<>();
         TableColumn order = new TableColumn("Order");
         table.getColumns().addAll(order);
         loaddataFromScan1();
@@ -106,7 +107,8 @@ public class Scan2Controller implements Initializable {
         SimpleDateFormat ft = new SimpleDateFormat ("yyyyMMddhhmmss");
         String time = ft.format(date);
         fileName = tableNO + "_" + time;
-        String pathName = "out/now/" + fileName;
+        String pathFolder = "out/now/";
+        String pathName = pathFolder + fileName;
         String predicate = "http://cafeone.com#";
         String fullURL = "http://cafeone.com/" + tableNO + "/" + time;
 
@@ -115,36 +117,47 @@ public class Scan2Controller implements Initializable {
         System.out.println("------------- Email send ----------------");
 
 
-        // Write to rdf file
-        if (addFlag) {
-            // Find file exist
-            String existFile = null;
-            for (int j = 0; j<order.size(); j++) {
-                String tbNO = order.get(j).substring(1, 3);
-                if (tbNO.equals(tableNO)) {
-                    existFile = order.get(j);
-                    Rdf rdfRead = new Rdf();
-                    ArrayList<String> order = rdfRead.listMenuStatus(existFile);
-                    System.out.println("ORDER : " + order.get(0));
-                    break;
-                }
-            }
-        }
-
         // contain to RDF file
         // Object mean
         //      - Ordered => that Menu is ordered.
         //      - Served => that Menu  is served.
         //      - Paid => that Menu is paid Or this RDF file is billed.
-        Rdf table_no = new Rdf();
-        table_no.createModel();
-        for (int j=0; j<arrOrdered.length; j++) {
-            table_no.addStatement(fullURL, predicate + arrOrdered[j], "Ordered");
+
+        //  Find file exist
+        String existFile = null;
+        listFilesForFolder(new File(pathFolder));
+        for (int j = 0; j<listFile.size(); j++) {
+            String tbNO = listFile.get(j).substring(1, 3);
+            System.out.println("tbNO : " + tbNO);
+            if (tbNO.equals(tableNO.substring(1))) {
+                existFile = pathFolder + listFile.get(j);
+                System.out.println("File Exist");
+                break;
+            }
         }
 
-        table_no.writeRDF(pathName);
-        System.out.println("------------- Write RDF file ----------------");
+        if (existFile != null) {
+            Rdf rdf = new Rdf();
+            rdf.prepareAdd(existFile, fullURL);
+            for (int j=0; j<arrOrdered.length; j++) {
+                rdf.addStatement(fullURL, predicate + arrOrdered[j], "Ordered");
+            }
+            if (rdf.deleteRdfFile(existFile)) {
+                rdf.writeRDF(pathName);
+                System.out.println("------------- Write new RDF file ----------------");
+            } else {
+                System.out.println("Write new RDF file failed");
+            }
+        } else {
+            Rdf table_no = new Rdf();
+            table_no.createModel();
+            for (int j=0; j<arrOrdered.length; j++) {
+                table_no.addStatement(fullURL, predicate + arrOrdered[j], "Ordered");
+            }
 
+            table_no.writeRDF(pathName);
+            System.out.println("------------- Write RDF file ----------------");
+        }
 
         // Go to main scene
         Parent mainSceneParent = FXMLLoader.load(getClass().getResource("main.fxml"));
@@ -194,12 +207,12 @@ public class Scan2Controller implements Initializable {
     }
 
     public void listFilesForFolder(final File folder) {
-        order.clear();
+        listFile.clear();
         for (final File fileEntry : folder.listFiles()) {
             if (fileEntry.isDirectory()) {
                 listFilesForFolder(fileEntry);
             } else {
-                order.add(fileEntry.getName());
+                listFile.add(fileEntry.getName());
             }
         }
     }

@@ -233,7 +233,6 @@ public class Rdf {
         // print out the predicate, subject and object of each statement
         while (iter.hasNext()) {
             Statement stmt = iter.nextStatement(); // get next statement
-//            Resource subject = stmt.getSubject();   // get the subject
             Property predicate = stmt.getPredicate(); // get the predicate
             RDFNode object = stmt.getObject();
 

@@ -116,4 +116,16 @@ public class CheckController implements Initializable {
         window.setScene(mainScene);
         window.show();
     }
+
+    @FXML
+    public void addPress(ActionEvent e) throws IOException {
+        Parent scan1SceneParent = FXMLLoader.load(getClass().getResource("scan1.fxml"));
+        Scene scan1Scene = new Scene(scan1SceneParent, 800, 600);
+
+        // get Stage information
+        Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();
+
+        window.setScene(scan1Scene);
+        window.show();
+    }
 }
