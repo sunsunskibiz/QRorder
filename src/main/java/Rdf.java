@@ -7,21 +7,32 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+ import java.util.Dictionary;
+ import java.util.Enumeration;
+ import java.util.Hashtable;
 
 
-public class Rdf {
+ public class Rdf {
     private Model model;
-//
+
 //    public static void main(String[] args) throws IOException {
 //       Rdf r = new Rdf();
 //       String pathDIR = "D:\\Project\\marvenEX\\prj01\\src\\main\\java\\tu\\myorg\\";
 //       String pathFile = pathDIR + "test.ttl";
-//        pathFile = "D:\\newProject\\out\\now\\T15_20190611103433.ttl";
+//        pathFile = "D:\\newProject\\out\\now\\T24_20190629102855.ttl";
 ////        ArrayList<String[]> arrListOrdered = r.listMenuStatus(pathFile);
-//        if (r.changeStatusToPaid(pathFile)) {
-//            System.out.println("changeStatusToPaid success.");
-//        } else {
-//            System.out.println("changeStatusToPaid failed");
+////        if (r.changeStatusToPaid(pathFile)) {
+////            System.out.println("changeStatusToPaid success.");
+////        } else {
+////            System.out.println("changeStatusToPaid failed");
+////        }
+//        Dictionary d = r.listMenuStatus(pathFile);
+//        for (Enumeration i = d.keys(); i.hasMoreElements();)
+//        {
+//            Object tmp = i.nextElement();
+//            System.out.println("Value in Dictionary : " + tmp + " : " + d.get(tmp));
+//            d.put(tmp, Integer.parseInt(d.get(tmp).toString()) + 1);
+//            System.out.println("Change Value in Dictionary : " + tmp + " : " + d.get(tmp));
 //        }
 ////        System.out.println();
 ////        System.out.println("After change to paid");
@@ -75,7 +86,7 @@ public class Rdf {
             Property  predicate = stmt.getPredicate(); // get the predicate
             RDFNode   object    = stmt.getObject();
 
-            String individualMenu = predicate.toString().substring(19);
+            String individualMenu = predicate.toString().substring(19, predicate.toString().length()-2);
             Statement newStmt;
             if (individualMenu.equals(menu)) {
                 newStmt = newModel.createStatement(subject, predicate, "Served");
@@ -140,30 +151,22 @@ public class Rdf {
         }
     }
 
-     public ArrayList<String> listMenuStatus(String file) {
+     public Dictionary listMenuStatus(String file) {
          model = readModel(file);
-         ArrayList<String> menuStatus = new ArrayList<String>();
+         Dictionary menuStatus = new Hashtable();
          // list the statements in the graph
          StmtIterator iter = model.listStatements();
 
          // print out the predicate, subject and object of each statement
          while (iter.hasNext()) {
-             Statement stmt      = iter.nextStatement();         // get next statement
-             Resource  subject   = stmt.getSubject();   // get the subject
+             Statement stmt      = iter.nextStatement(); // get next statement
              Property  predicate = stmt.getPredicate(); // get the predicate
              RDFNode   object    = stmt.getObject();    // get the object
 
-             String s = subject.toString();
              String p = predicate.toString();
              String o = object.toString();
-//
-//             System.out.print(s);
-//             System.out.print(" " + p + " ");
 
-             String menuStatusEachOne;
-             // Menu name
-             menuStatusEachOne = p.substring(19);
-             // Status
+             String menuStatusEachOne = p.substring(19, p.length()-2);
              if (object instanceof Resource) {
 //                 System.out.print(o);
                  menuStatusEachOne = menuStatusEachOne + "|" + o;
@@ -172,11 +175,31 @@ public class Rdf {
 //                 System.out.print(" \"" + o + "\"");
                  menuStatusEachOne = menuStatusEachOne + "|" + "\"" + o + "\"";
              }
-//             System.out.println(" .");
-             menuStatus.add(menuStatusEachOne);
+             // Menu name
+             menuStatus.put(menuStatusEachOne, p.substring(p.length()-1)) ;
          }
          return menuStatus;
      }
+
+    public ArrayList<String> listNumber(String file) {
+        model = readModel(file);
+        ArrayList<String> listNumber = new ArrayList<String>();
+        // list the statements in the graph
+        StmtIterator iter = model.listStatements();
+
+        // print out the predicate, subject and object of each statement
+        while (iter.hasNext()) {
+            Statement stmt      = iter.nextStatement();         // get next statement
+            Property  predicate = stmt.getPredicate(); // get the predicate
+            String p = predicate.toString();
+
+            String listNumberEachOne;
+            listNumberEachOne = p.substring(p.length()-1);
+            System.out.println(listNumberEachOne);
+            listNumber.add(listNumberEachOne);
+        }
+        return listNumber;
+    }
 
      public void writeRDF(String pathFile) throws IOException {
          String fileName = pathFile + ".ttl";

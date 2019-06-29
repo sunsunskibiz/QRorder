@@ -16,6 +16,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.ResourceBundle;
 import java.nio.file.Files;
 import java.nio.file.*;
@@ -64,14 +66,17 @@ public class CheckController implements Initializable {
         ArrayList<CheckTable> ot = new ArrayList<>();
         int sum = 0;
         Rdf rdfRead = new Rdf();
-        ArrayList<String> order = rdfRead.listMenuStatus(destPath);
-        orderArr = order.toArray(new String[order.size()]);
-        for (int k=0; k<order.size(); k++) {
-            String menuRDF = orderArr[k].substring(0, orderArr[k].indexOf("|"));
-            String statusRDF = orderArr[k].substring(orderArr[k].indexOf("|") + 2, orderArr[k].length()-1);
+        Dictionary order = rdfRead.listMenuStatus(destPath);
+        int count = 1;
+        for (Enumeration i = order.keys(); i.hasMoreElements();)
+        {
+            Object key = i.nextElement();
+            String predicate = key.toString();
+            String menuRDF = predicate.substring(0, predicate.indexOf("|"));
+            String statusRDF = predicate.substring(predicate.indexOf("|") + 2, predicate.length()-1);
             for (String[] arrS : arrMenu) {
                 if (menuRDF.equals(arrS[0])) {
-                    ot.add(new CheckTable(Integer.toString(k+1), menuRDF, "1", arrS[1], statusRDF));
+                    ot.add(new CheckTable(Integer.toString(count++), menuRDF, order.get(key).toString(), arrS[1], statusRDF));
                     // SUM only Served
                     if (statusRDF.equals("Served"))
                         sum += Integer.parseInt(arrS[1]);

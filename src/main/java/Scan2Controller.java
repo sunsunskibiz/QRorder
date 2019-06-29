@@ -140,7 +140,7 @@ public class Scan2Controller implements Initializable {
             Rdf rdf = new Rdf();
             rdf.prepareAdd(existFile, fullURL);
             for (int j=0; j<arrOrdered.length; j++) {
-                rdf.addStatement(fullURL, predicate + arrOrdered[j], "Ordered");
+                rdf.addStatement(fullURL, predicate + arrOrdered[j] + ",1", "Ordered");
             }
             if (rdf.deleteRdfFile(existFile)) {
                 rdf.writeRDF(pathName);
@@ -152,7 +152,7 @@ public class Scan2Controller implements Initializable {
             Rdf table_no = new Rdf();
             table_no.createModel();
             for (int j=0; j<arrOrdered.length; j++) {
-                table_no.addStatement(fullURL, predicate + arrOrdered[j], "Ordered");
+                table_no.addStatement(fullURL, predicate + arrOrdered[j] + ",1", "Ordered");
             }
 
             table_no.writeRDF(pathName);
