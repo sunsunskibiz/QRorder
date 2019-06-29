@@ -11,10 +11,8 @@ import javafx.scene.control.TableView;
 import javafx.collections.FXCollections;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
-import org.apache.jena.vocabulary.RDF;
 
 import javax.mail.*;
-import javax.mail.internet.MimeBodyPart;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -55,7 +53,7 @@ public class MainController implements Initializable {
         };
         ScheduledExecutorService service = Executors
                 .newSingleThreadScheduledExecutor();
-        service.scheduleAtFixedRate(runnable, 0, 5, TimeUnit.SECONDS);
+        service.scheduleAtFixedRate(runnable, 0, 8, TimeUnit.SECONDS);
     }
 
     void fillTable() {

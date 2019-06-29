@@ -65,7 +65,7 @@ public class KitchenController implements Initializable {
         };
         ScheduledExecutorService service = Executors
                 .newSingleThreadScheduledExecutor();
-        service.scheduleAtFixedRate(runnable, 0, 5, TimeUnit.SECONDS);
+        service.scheduleAtFixedRate(runnable, 0, 8, TimeUnit.SECONDS);
     }
 
     void fillServeTable() {
