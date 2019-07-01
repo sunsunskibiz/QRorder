@@ -113,6 +113,7 @@ public class Scan2Controller implements Initializable {
         String fullURL = "http://cafeone.com/" + tableNO + "/" + time;
 
         // Send Email
+//        SendEmail("smtp.gmail.com", 587, "cafeone.official2@gmail.com", "Cafeone2019", "cafeone.kitchen7@gmail.com" );
         SendEmail("smtp.gmail.com", 587, "cafeone.official@gmail.com", "Cafeone2019", "cafeone.kitchen@gmail.com" );
         System.out.println("------------- Email send ----------------");
 

@@ -1,3 +1,5 @@
+import com.sun.mail.imap.IMAPFolder;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -13,6 +15,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import javax.mail.*;
+import javax.mail.event.MessageCountAdapter;
+import javax.mail.event.MessageCountEvent;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -53,26 +57,35 @@ public class KitchenController implements Initializable {
         orderSrv.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("order"));
 
         // Fetch email every 5 second
+//        ReceiveEmail("smtp.gmail.com", 993, "cafeone.kitchen7@gmail.com", "cafeone2019");
+        ReceiveEmail("smtp.gmail.com", 993, "cafeone.kitchen@gmail.com", "cafeone2019");
         Runnable runnable = new Runnable() {
             public void run() {
-                // task to run goes here
-                ReceiveEmail("smtp.gmail.com", 993, "cafeone.kitchen@gmail.com", "Cafeone2019");
-                System.out.println("===========================NEW=================================");
+                String s = Platform.isFxApplicationThread() ? "UI Thread" : "Background Thread";
+                System.out.println("1:In " + s);
                 fillPrepareTable();
                 fillServeTable();
-//                prepare.clear();
             }
         };
         ScheduledExecutorService service = Executors
                 .newSingleThreadScheduledExecutor();
         service.scheduleAtFixedRate(runnable, 0, 8, TimeUnit.SECONDS);
+
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("===========================NEW Email=================================");
+                String s = Platform.isFxApplicationThread() ? "UI Thread" : "Background Thread";
+                System.out.println("2:In " + s);
+                monitor("smtp.gmail.com", 993, "cafeone.kitchen@gmail.com", "cafeone2019", 5000);
+//                monitor("smtp.gmail.com", 993, "cafeone.kitchen7@gmail.com", "cafeone2019", 5000);
+            }
+        };
+        new Thread(task).start();
+
     }
 
     void fillServeTable() {
-//        final ObservableList<KitchenTable> data = FXCollections.observableArrayList(
-//                new KitchenTable("01", "CHOCOLATE MUD BROWNIE")
-//        );
-
         ArrayList<KitchenTable> sv = new ArrayList<>();
         for (String i : serve) {
             String table = i.substring(0, 2);
@@ -148,7 +161,6 @@ public class KitchenController implements Initializable {
 
                 // Add in ArrayList prepare
                 String tableNO = individualmsg.getSubject().substring(1, 3);
-//                System.out.println("tableNO : " + tableNO);
                 String[] arr = messageContent.split("\n");
                 for (String s : arr) {
                     System.out.println(s);
@@ -178,6 +190,7 @@ public class KitchenController implements Initializable {
         if (prepareTable.getSelectionModel().getSelectedItem() != null) {
             String s = prepareTable.getSelectionModel().getSelectedItem().getTableNO() + prepareTable.getSelectionModel().getSelectedItem().getOrder();
             serve.add(s);
+//            SendEmail("smtp.gmail.com", 587, "cafeone.kitchen2@gmail.com", "Cafeone2019", "cafeone.official3@gmail.com", "served_" + s);
             SendEmail("smtp.gmail.com", 587, "cafeone.kitchen@gmail.com", "Cafeone2019", "cafeone.official@gmail.com", "served_" + s);
             prepare.remove(prepare.indexOf(s));
             System.out.println("Email Send");
@@ -229,5 +242,123 @@ public class KitchenController implements Initializable {
 
         window.setScene(mainScene);
         window.show();
+    }
+
+    public void monitor(String host, int port, String user, String password, int freq) {
+        System.out.println("\nTesting monitor\n");
+        try {
+
+            Properties prop = new Properties();
+            prop.put("mail.smtp.auth", true);
+            prop.put("mail.smtp.starttls.enable", "true");
+            prop.put("mail.smtp.host", host);
+            prop.put("mail.smtp.port", port);
+            prop.put("mail.smtp.ssl.trust", host);
+            Session session = Session.getDefaultInstance(prop);
+
+            Store store = session.getStore("imaps");
+            store.connect(host, user, password);
+
+//            // Create folder
+//            Folder folder = store.getFolder("INBOX");
+//            folder.open(Folder.READ_WRITE);
+            // Open a Folder
+            Folder folder = store.getFolder("INBOX");
+            if (folder == null || !folder.exists()) {
+                System.out.println("Invalid folder");
+                System.exit(1);
+            } else {
+                System.out.println("Folder exist");
+            }
+
+            folder.open(Folder.READ_WRITE);
+
+            // Add messageCountListener to listen for new messages
+            folder.addMessageCountListener(new MessageCountAdapter() {
+                public void messagesAdded(MessageCountEvent ev) {
+                    Message[] msgs = ev.getMessages();
+                    System.out.println("Got " + msgs.length + " new messages");
+
+                    // Just dump out the new messages
+                    for (int i = 0; i < msgs.length; i++) {
+                        try {
+                            System.out.println("-----");
+                            System.out.println("Message " + msgs[i].getMessageNumber() + ":");
+                            Message individualmsg = msgs[i];
+
+                            String contentType = individualmsg.getContentType();
+                            String messageContent = "";
+
+                            if (contentType.contains("multipart")) {
+                                Multipart multiPart = (Multipart) individualmsg.getContent();
+                                int numberOfParts = multiPart.getCount();
+                                for (int partCount = 0; partCount < numberOfParts; partCount++) {
+                                    MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+                                    messageContent = part.getContent().toString();
+                                }
+                            } else if (contentType.contains("text/plain") || contentType.contains("text/html")) {
+                                Object content = individualmsg.getContent();
+                                if (content != null) {
+                                    messageContent = content.toString();
+                                }
+                            } else if (contentType.contains("image/jpeg")) {
+                                System.out.println("--------> image/jpeg");
+                            }
+                System.out.println("Content: " + messageContent);
+
+                            // Add in ArrayList prepare
+                            String tableNO = individualmsg.getSubject().substring(1, 3);
+                            String[] arr = messageContent.split("\n");
+                            for (String s : arr) {
+                                System.out.println(s);
+                                String ss = s.substring(0, s.length()-1);
+                                String sss = tableNO + ss;
+                                if (prepare.indexOf(sss) == -1) {
+                                    prepare.add(sss);
+                                }
+                            }
+
+//                            // set the DELETE flag to true
+//                            individualmsg.setFlag(Flags.Flag.DELETED, true);
+//                            System.out.println("Marked DELETE for message: " + individualmsg.getSubject());
+                        } catch (MessagingException mex) {
+                            mex.printStackTrace();
+                        } catch (IOException e) {
+
+                        }
+                    }
+                }
+            });
+
+            // Check mail once in "freq" MILLIseconds
+            boolean supportsIdle = false;
+            try {
+                if (folder instanceof IMAPFolder) {
+                    IMAPFolder f = (IMAPFolder)folder;
+                    f.idle();
+                    supportsIdle = true;
+                }
+            } catch (FolderClosedException fex) {
+                throw fex;
+            } catch (MessagingException mex) {
+                supportsIdle = false;
+            }
+            for (;;) {
+                if (supportsIdle && folder instanceof IMAPFolder) {
+                    IMAPFolder f = (IMAPFolder)folder;
+                    f.idle();
+                    System.out.println("IDLE done");
+                } else {
+                    Thread.sleep(freq); // sleep for freq milliseconds
+
+                    // This is to force the IMAP server to send us
+                    // EXISTS notifications.
+                    folder.getMessageCount();
+                }
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
