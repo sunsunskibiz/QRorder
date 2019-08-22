@@ -1,1 +1,1 @@
-# QR order - Scan food order by QRcode
+# QR order -Scan food orders
