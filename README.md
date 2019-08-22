@@ -1,12 +1,12 @@
 # QR order - Scan food orders via QR code
 > Here goes your awesome project description!
 
-/ Table of contents
-/ [Screenshots](#screenshots)
-/ [Technologies](#technologies)
-/ [Setup](#setup)
-/ [Features](#features)
-/ [Status](#status)
+## Table of contents
+* [Screenshots](#screenshots)
+* [Technologies](#technologies)
+* [Setup](#setup)
+* [Features](#features)
+* [Status](#status)
 
 ## Features
 List of features ready and TODOs for future development
