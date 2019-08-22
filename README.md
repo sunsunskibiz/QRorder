@@ -40,7 +40,7 @@ To-do list:
 * Wow improvement to be done 2
 
 ## Status
-Project is: _finished
+Project is: _finished_
 
 ## Inspiration
 Add here credits. Project inspired by..., based on...
