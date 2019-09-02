@@ -1,4 +1,4 @@
-# QR order - Scan food orders via QR code
+# QR order - Scan food orders with QR code
 > Here goes your awesome project description!
 
 ## Table of contents
