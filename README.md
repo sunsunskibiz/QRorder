@@ -9,11 +9,12 @@
 * [Status](#status)
 
 ## Features
-List of features ready and TODOs for future development
-* Awesome feature 1
+* Create QR order
 ![Example screenshot](./img/screenshot.png)
-* Awesome feature 2
-* Awesome feature 3
+* Scan Qr order by webcam
+* Save list of food in RDF format(Turtle)
+* Send list of food to another computer via Gmail
+* Summary of the list of food that ordered each day
 
 ## Technologies
 * Tech 1 - version 1.0
