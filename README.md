@@ -17,9 +17,13 @@
 * Summary of the list of food that ordered each day
 
 ## Technologies
-* Tech 1 - version 1.0
-* Tech 2 - version 2.0
-* Tech 3 - version 3.0
+* Java/JavaFX - version 12
+* Maven - version 3.6.1
+* OpenCV - version 3.4.5
+* Turtle (RDF)
+* Gmail
+* QR code
+* Webcam
 
 ## Setup
 Describe how to install / setup your local environement / add link to demo version.
