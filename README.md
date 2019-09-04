@@ -1,9 +1,14 @@
 # QR order - Scan food orders with QR code
 > This is a Java Desktop Application that helps to convert QR order (list of food with QR code) into RDF format (Turtle) and send to another computer via Gmail and summary of the list of food that ordered each day. This application uses QR code and PDF Library to create QR order, use a webcam to scan QR order and use OpenCV to convert QR order to Turtle.
 
+## QR order (list of food with QR code)
+![Main1](./Presentation/QR order-ENG.jpg)
 ## Main menu on computer kitchen
 ![Main1](./Presentation/main1.jpg)
-
+## Restaurant map
+![Main1](./PresentationRestaurant blueprint.jpg)
+## Main menu on computer kitchen
+![Main1](./Presentation/main1.jpg)
 
 ## Table of contents
 * [Technologies](#technologies)
