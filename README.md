@@ -3,12 +3,10 @@
 
 ## QR order (list of food with QR code)
 ![QR order](./Presentation/QRorder-ENG.jpg)
-## Main menu on computer kitchen
-![Main1](./Presentation/main1.jpg)
-## Restaurant map
-![Main1](./Presentation/RestaurantBlueprint.jpg)
-## Main menu on computer kitchen
-![Main1](./Presentation/main1.jpg)
+## Scan QR order via webcam
+![Scan1](./Presentation/scan1.jpg)
+## Result from scanning
+![Scan2](./Presentation/scan2.jpg)
 
 ## Table of contents
 * [Technologies](#technologies)
