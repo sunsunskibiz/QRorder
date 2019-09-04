@@ -6,7 +6,7 @@
 ## Main menu on computer kitchen
 ![Main1](./Presentation/main1.jpg)
 ## Restaurant map
-![Main1](./PresentationRestaurant blueprint.jpg)
+![Main1](./Presentation/Restaurant blueprint.jpg)
 ## Main menu on computer kitchen
 ![Main1](./Presentation/main1.jpg)
 
