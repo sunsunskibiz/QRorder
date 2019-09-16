@@ -1,4 +1,6 @@
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -9,9 +11,11 @@ import java.io.*;
 import javax.imageio.ImageIO;
 import java.util.Hashtable;
 
+import javafx.stage.WindowEvent;
 import org.opencv.core.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Properties;
 
 import com.google.zxing.BarcodeFormat;
@@ -35,13 +39,19 @@ public class HelloFX extends Application {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
+    static String usernameCashier = "cafeone.official@gmail.com";
+    static String passwordCashier = "Cafeone2019";
+    static String usernameKitchen = "cafeone.kitchen@gmail.com";
+    static String passwordKitchen = "Cafeone2019";
+
+
+    MainController mcon;
     final static String[][] arrMenu = {
             {"PINKLEMONADE", "39", "x", "y"}, {"MATCHA_FRAPPE", "49", "x", "y"}, {"WHITE_CHOC_MACCHIATO", "49", "x", "y"}, {"LYNCHEE_JUICE", "29", "x", "y"},
             {"STRAWBERRY_MILLE_CREPR", "69", "x", "y"}, {"WARM_CHOCOLATE_CHIP_PANOOKIE", "79", "x", "y"}, {"MATHCA_MILLE_CREPE", "169", "x", "y"}, {"DARK_CHOCOLATE_PRAPPE", "49", "x", "y"},
             {"HONEY_TOAST", "109", "x", "y"}, {"FIGGY_PUDDING", "89", "x", "y"}, {"CHOCOLATE_MUD_BROWNIE", "79", "x", "y"}, {"TWO-TONE_KAKIGORI", "139", "x", "y"}};
 
     /////////////////////////////// Part 2 //////////////////////////////////////
-
     void pdfAddText(PdfContentByte cb, int x, int y, String tx, int sz) throws Exception {
         cb.setFontAndSize(bf, sz);
         cb.beginText();
@@ -224,13 +234,25 @@ public class HelloFX extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("/main.fxml"));
-//        Parent root = FXMLLoader.load(getClass().getResource("/kitchen.fxml"));
+
+        FXMLLoader loader = new FXMLLoader();
+//        Parent root = loader.load(getClass().getResourceAsStream("/main.fxml"));
+        Parent root = loader.load(getClass().getResourceAsStream("/kitchen.fxml"));
+
         stage.setTitle("QR Order");
         stage.setScene(new Scene(root, 800, 600));
-
         stage.show();
+
+        stage.setOnCloseRequest(event -> handleExit());
     }
+
+    private void handleExit()
+    {
+        Platform.exit();
+        System.exit(0);
+
+    }
+
 
     public static void main(String[] args) throws Exception {
         System.out.println("Hello World");
@@ -246,6 +268,6 @@ public class HelloFX extends Application {
 //        helloFXNOTE.createQRorder();
 //        System.out.println("Create QRorder finished");
 
-        launch();
+        launch(args);
     }
 }

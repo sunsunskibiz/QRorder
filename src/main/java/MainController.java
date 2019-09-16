@@ -30,11 +30,15 @@ import java.util.concurrent.TimeUnit;
 public class MainController implements Initializable {
     @FXML
     private TableView<Table> mytable;
+    private ScheduledExecutorService service;
 
     private ArrayList<String> order;
     String[] arrOrdered;
     String pathname = "D:\\newProject\\out\\now";
     static String destpath;
+    String username = HelloFX.usernameCashier;
+    String password = HelloFX.passwordCashier;
+    boolean isRunning = true;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -47,30 +51,35 @@ public class MainController implements Initializable {
         time.setCellValueFactory(new PropertyValueFactory<OrderTable,String>("time"));
 
         // Fetch email every 5 second
-        ReceiveEmail("smtp.gmail.com", 993, "cafeone.official@gmail.com", "Cafeone2019");
-//        ReceiveEmail("smtp.gmail.com", 993, "cafeone.official3@gmail.com", "Cafeone2019");
+        ReceiveEmail("smtp.gmail.com", 993, username, password);
         Runnable runnable = new Runnable() {
-            public void run() {
-                        String ss = Platform.isFxApplicationThread()? "UI Thread" : "Background";
-                        System.out.println("2: In " + ss);                        listFilesForFolder(folder);
-                        fillTable();
-                    }
-                };
-                ScheduledExecutorService service = Executors
-                        .newSingleThreadScheduledExecutor();
-                service.scheduleAtFixedRate(runnable, 0, 8, TimeUnit.SECONDS);
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                String s = Platform.isFxApplicationThread()? "UI Thread" : "Background";
-                System.out.println("1: In " + s);
-                monitor("smtp.gmail.com", 993, "cafeone.official@gmail.com", "Cafeone2019", 5000);
-//                monitor("smtp.gmail.com", 993, "cafeone.official3@gmail.com", "Cafeone2019", 5000);
-            }
-        };
-        new Thread(task).start();
+                public void run() {
+                    String ss = Platform.isFxApplicationThread() ? "UI Thread" : "Background";
+                    System.out.println("2: In " + ss);
+                    System.out.println("Status isRunning : " + isRunning);
+                    listFilesForFolder(folder);
+                    fillTable();
+                }
+            };
+            service = Executors.newSingleThreadScheduledExecutor();
+            service.scheduleAtFixedRate(runnable, 0, 8, TimeUnit.SECONDS);
+            Runnable task = new Runnable() {
+                @Override
+                public void run() {
+                    String s = Platform.isFxApplicationThread()? "UI Thread" : "Background";
+                    System.out.println("1: In " + s);
+                    monitor("smtp.gmail.com", 993, username, password, 5000);
+                }
+            };
+            new Thread(task).start();
 
     }
+
+    public void dispose() {
+        isRunning = false;
+        service.shutdown();
+    }
+    Scan1Controller s1con;
 
     void fillTable() {
         ArrayList<Table> ot = new ArrayList<>();
@@ -87,8 +96,10 @@ public class MainController implements Initializable {
     }
     @FXML
     public void changeToScan1(ActionEvent e) throws IOException {
-        Parent scan1SceneParent = FXMLLoader.load(getClass().getResource("scan1.fxml"));
+        FXMLLoader loader = new FXMLLoader();
+        Parent scan1SceneParent = loader.load(getClass().getResourceAsStream("scan1.fxml"));
         Scene scan1Scene = new Scene(scan1SceneParent, 800, 600);
+        s1con = loader.getController();
 
         // get Stage information
         Stage window = (Stage) ((Node)e.getSource()).getScene().getWindow();

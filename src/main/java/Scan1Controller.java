@@ -73,8 +73,10 @@ public class Scan1Controller {
     private int rangeDuplicateY = 5;
     private int rangeY = 7;
     BufferedImage[] aMk = new BufferedImage[12];
+    boolean isRunning = true;
 
     final static String[][] arrMenu = HelloFX.arrMenu;
+
     public void initialize() {
         this.capture = new VideoCapture();
         this.capture.open(0);
@@ -85,6 +87,8 @@ public class Scan1Controller {
             Runnable frameGrabber = new Runnable() {
                 @Override
                 public void run() {
+                    System.out.println("Status isRunning from Scan1 : " + isRunning);
+
                     // effectively grab and process a single frame
                     Mat frame = grabFrame();
                     // convert and show the frame
@@ -92,7 +96,6 @@ public class Scan1Controller {
                     updateImageView(currentFrame, imageToShow);
                 }
             };
-
             this.timer = Executors.newSingleThreadScheduledExecutor();
             this.timer.scheduleAtFixedRate(frameGrabber, 0, 33, TimeUnit.MILLISECONDS);
         }
@@ -452,5 +455,11 @@ public class Scan1Controller {
 
         window.setScene(scan1Scene);
         window.show();
+    }
+
+    public void dispose() {
+        isRunning = false;
+//        runnable.terminate();
+        timer.shutdown();
     }
 }

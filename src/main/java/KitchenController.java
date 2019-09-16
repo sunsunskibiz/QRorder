@@ -38,6 +38,10 @@ public class KitchenController implements Initializable {
     private TableView<KitchenTable> serveTable;
     private ArrayList<String> prepare;
     private ArrayList<String> serve;
+    boolean isRunning = true;
+    String username = HelloFX.usernameKitchen;
+    String password = HelloFX.passwordKitchen;
+    String usernameTo = HelloFX.usernameCashier;
 
     public void initialize(URL url, ResourceBundle rb) {
         // Prepare table
@@ -57,8 +61,7 @@ public class KitchenController implements Initializable {
         orderSrv.setCellValueFactory(new PropertyValueFactory<KitchenTable,String>("order"));
 
         // Fetch email every 5 second
-//        ReceiveEmail("smtp.gmail.com", 993, "cafeone.kitchen7@gmail.com", "cafeone2019");
-        ReceiveEmail("smtp.gmail.com", 993, "cafeone.kitchen@gmail.com", "cafeone2019");
+        ReceiveEmail("smtp.gmail.com", 993, username, password);
         Runnable runnable = new Runnable() {
             public void run() {
                 String s = Platform.isFxApplicationThread() ? "UI Thread" : "Background Thread";
@@ -69,7 +72,7 @@ public class KitchenController implements Initializable {
         };
         ScheduledExecutorService service = Executors
                 .newSingleThreadScheduledExecutor();
-        service.scheduleAtFixedRate(runnable, 0, 8, TimeUnit.SECONDS);
+        service.scheduleAtFixedRate(runnable, 0, 5, TimeUnit.SECONDS);
 
         Runnable task = new Runnable() {
             @Override
@@ -77,8 +80,7 @@ public class KitchenController implements Initializable {
                 System.out.println("===========================NEW Email=================================");
                 String s = Platform.isFxApplicationThread() ? "UI Thread" : "Background Thread";
                 System.out.println("2:In " + s);
-                monitor("smtp.gmail.com", 993, "cafeone.kitchen@gmail.com", "cafeone2019", 5000);
-//                monitor("smtp.gmail.com", 993, "cafeone.kitchen7@gmail.com", "cafeone2019", 5000);
+                monitor("smtp.gmail.com", 993, username, password, 5000);
             }
         };
         new Thread(task).start();
@@ -166,9 +168,9 @@ public class KitchenController implements Initializable {
                     System.out.println(s);
                     String ss = s.substring(0, s.length()-1);
                     String sss = tableNO + ss;
-                    if (prepare.indexOf(sss) == -1) {
+//                    if (prepare.indexOf(sss) == -1) {
                         prepare.add(sss);
-                    }
+//                    }
                 }
 
                 // set the DELETE flag to true
@@ -190,8 +192,7 @@ public class KitchenController implements Initializable {
         if (prepareTable.getSelectionModel().getSelectedItem() != null) {
             String s = prepareTable.getSelectionModel().getSelectedItem().getTableNO() + prepareTable.getSelectionModel().getSelectedItem().getOrder();
             serve.add(s);
-//            SendEmail("smtp.gmail.com", 587, "cafeone.kitchen2@gmail.com", "Cafeone2019", "cafeone.official3@gmail.com", "served_" + s);
-            SendEmail("smtp.gmail.com", 587, "cafeone.kitchen@gmail.com", "Cafeone2019", "cafeone.official@gmail.com", "served_" + s);
+            SendEmail("smtp.gmail.com", 587, username, password, usernameTo, "served_" + s);
             prepare.remove(prepare.indexOf(s));
             System.out.println("Email Send");
         }
@@ -313,9 +314,9 @@ public class KitchenController implements Initializable {
                                 System.out.println(s);
                                 String ss = s.substring(0, s.length()-1);
                                 String sss = tableNO + ss;
-                                if (prepare.indexOf(sss) == -1) {
+//                                if (prepare.indexOf(sss) == -1) {
                                     prepare.add(sss);
-                                }
+//                                }
                             }
 
 //                            // set the DELETE flag to true
@@ -360,5 +361,10 @@ public class KitchenController implements Initializable {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void dispose()
+    {
+        isRunning = false;
     }
 }

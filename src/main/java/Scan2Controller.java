@@ -36,6 +36,9 @@ public class Scan2Controller implements Initializable {
     private TableView<OrderTable> table;
     @FXML
     private ImageView currentFrame;
+    String username = HelloFX.usernameCashier;
+    String password = HelloFX.passwordCashier;
+    String usernameTo = HelloFX.usernameKitchen;
 
     private ArrayList<String> listFile;
     ObservableList<OrderTable> data;
@@ -113,8 +116,7 @@ public class Scan2Controller implements Initializable {
         String fullURL = "http://cafeone.com/" + tableNO + "/" + time;
 
         // Send Email
-//        SendEmail("smtp.gmail.com", 587, "cafeone.official2@gmail.com", "Cafeone2019", "cafeone.kitchen7@gmail.com" );
-        SendEmail("smtp.gmail.com", 587, "cafeone.official@gmail.com", "Cafeone2019", "cafeone.kitchen@gmail.com" );
+        SendEmail("smtp.gmail.com", 587, username, password, usernameTo );
         System.out.println("------------- Email send ----------------");
 
 
