@@ -33,11 +33,11 @@
 
 ## Setup
 1. Setup local environement
-* Install JDK 12.0
-* Install OpenCV 3.4.5
-* Install Maven 3.6.1
-* Install Apache jena 3.10.0
-* Connect webcam to Computer cashier
+  * Install JDK 12.0
+  * Install OpenCV 3.4.5
+  * Install Maven 3.6.1
+  * Install Apache jena 3.10.0
+  * Connect webcam to Computer cashier
 
 2. Setup parameter
   - Open HelloFX.java with text editor
