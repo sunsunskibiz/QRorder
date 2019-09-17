@@ -37,12 +37,12 @@
   2. Install OpenCV 3.4.5
   3. Install Maven 3.6.1
   4. Install Apache jena 3.10.0
-  5. Connect webcam to Computer cashier
-
+  5. Connect webcam to Computer cashier/ Main computer
+  ![RestaurantBlueprint](./Presentation/RestaurantBlueprint.jpg)
 ### Setup parameter
   1. Open HelloFX.java with text editor
-  2. Fill email cashier, password cashier, email kitchen, password kitchen
-  3. Choses mode that this computer want to use between Cashier = main.fxml and Kitchen = kitchen.fxml
+  2. Fill  Cashier email, Cashier password, Kitchen email, Kitchen password
+  3. Chosen mode that this computer want to use between Cashier = main.fxml and Kitchen = kitchen.fxml
 ## Usage
 > command line
 ```
