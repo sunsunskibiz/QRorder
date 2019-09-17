@@ -34,11 +34,10 @@
 Describe how to install / setup your local environement / add link to demo version.
 
 ## Usage
-'''
+```
 mvn javafx:compile
 mvn javafx:run
-'''
-`put-your-code-here`
+```
 
 ## Status
 Project is: _finished_
