@@ -38,6 +38,7 @@
   3. Install Maven 3.6.1
   4. Install Apache jena 3.10.0
   5. Connect webcam to Computer cashier/ Main computer
+  > Restaurant layout
   ![RestaurantBlueprint](./Presentation/RestaurantBlueprint.jpg)
 ### Setup parameter
   1. Open HelloFX.java with text editor
