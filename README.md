@@ -25,6 +25,7 @@
 * Java/JavaFX - version 12
 * Maven - version 3.6.1
 * OpenCV - version 3.4.5
+* Apache jena - version 3.10.0
 * Turtle (RDF)
 * Gmail
 * QR code
@@ -32,9 +33,10 @@
 
 ## Setup
 Describe how to install / setup your local environement / add link to demo version.
-install JDK 12.0
-install OpenCV 3.4.5
-install Maven 3.6.1
+* Install JDK 12.0
+* Install OpenCV 3.4.5
+* Install Maven 3.6.1
+* Install Apache jena 3.10.0
 Connect webcam to Computer cashier
 
 
