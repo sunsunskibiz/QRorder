@@ -32,17 +32,17 @@
 * Webcam
 
 ## Setup
-1. Setup local environement
-  * Install JDK 12.0
-  * Install OpenCV 3.4.5
-  * Install Maven 3.6.1
-  * Install Apache jena 3.10.0
-  * Connect webcam to Computer cashier
+### Setup local environement
+  1. Install JDK 12.0
+  2. Install OpenCV 3.4.5
+  3. Install Maven 3.6.1
+  4. Install Apache jena 3.10.0
+  5. Connect webcam to Computer cashier
 
-2. Setup parameter
-  - Open HelloFX.java with text editor
-  - Fill email cashier, password cashier, email kitchen, password kitchen
-  - Choses mode that this computer want to use between Cashier = main.fxml and Kitchen = kitchen.fxml
+### Setup parameter
+  1. Open HelloFX.java with text editor
+  2. Fill email cashier, password cashier, email kitchen, password kitchen
+  3. Choses mode that this computer want to use between Cashier = main.fxml and Kitchen = kitchen.fxml
 ## Usage
 > command line
 ```
