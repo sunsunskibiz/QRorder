@@ -32,8 +32,17 @@
 
 ## Setup
 Describe how to install / setup your local environement / add link to demo version.
+install JDK 12.0
+install OpenCV 3.4.5
+install Maven 3.6.1
+Connect webcam to Computer cashier
 
+
+HelloFX.java
+fill email cashier, password cashier, email kitchen, password kitchen
+choses mode that this computer want to use between Cashier = main.fxml and Kitchen = kitchen.fxml
 ## Usage
+> command line
 ```
 mvn javafx:compile
 mvn javafx:run
