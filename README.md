@@ -34,8 +34,10 @@
 Describe how to install / setup your local environement / add link to demo version.
 
 ## Usage
-Show examples of usage:
-`put-your-code-here`
+```
+mvn javafx:compile
+mvn javafx:run
+```
 
 ## Status
 Project is: _finished_
