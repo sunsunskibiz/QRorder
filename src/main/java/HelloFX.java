@@ -39,13 +39,13 @@ public class HelloFX extends Application {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
 
-    static String usernameCashier = "cafeone.official@gmail.com";
-    static String passwordCashier = "Cafeone2019";
-    static String usernameKitchen = "cafeone.kitchen@gmail.com";
-    static String passwordKitchen = "Cafeone2019";
+    static String usernameCashier = "usernameCashier@gmail.com";
+    static String passwordCashier = "passwordCashier";
+    static String usernameKitchen = "usernameKitchen@gmail.com";
+    static String passwordKitchen = "passwordKitchen";
+    String mode = "/main.fxml";
+//    String mode = "/kitchen.fxml";
 
-
-    MainController mcon;
     final static String[][] arrMenu = {
             {"PINKLEMONADE", "39", "x", "y"}, {"MATCHA_FRAPPE", "49", "x", "y"}, {"WHITE_CHOC_MACCHIATO", "49", "x", "y"}, {"LYNCHEE_JUICE", "29", "x", "y"},
             {"STRAWBERRY_MILLE_CREPR", "69", "x", "y"}, {"WARM_CHOCOLATE_CHIP_PANOOKIE", "79", "x", "y"}, {"MATHCA_MILLE_CREPE", "169", "x", "y"}, {"DARK_CHOCOLATE_PRAPPE", "49", "x", "y"},
@@ -236,8 +236,7 @@ public class HelloFX extends Application {
     public void start(Stage stage) throws IOException {
 
         FXMLLoader loader = new FXMLLoader();
-//        Parent root = loader.load(getClass().getResourceAsStream("/main.fxml"));
-        Parent root = loader.load(getClass().getResourceAsStream("/kitchen.fxml"));
+        Parent root = loader.load(getClass().getResourceAsStream(mode));
 
         stage.setTitle("QR Order");
         stage.setScene(new Scene(root, 800, 600));
